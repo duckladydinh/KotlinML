@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="cd0db953-6eca-40c8-a91f-5b06b694809b" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin File" />
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1Ug9XB1jmWGFvAHUsbu5ngq7sqk" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Kotlin" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="thuan.handsome.autoparams.env" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Kotlin.thuan.handsome.autoparams.MainKt">
+    <configuration name="thuan.handsome.autoparams.MainKt" type="JetRunConfigurationType" factoryName="Kotlin" temporary="true" nameIsGenerated="true">
+      <module name="autoparams" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" value="thuan.handsome.autoparams.MainKt" />
+      <option name="WORKING_DIRECTORY" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="thuan.handsome.autoparams.main" type="JetRunConfigurationType" factoryName="Kotlin" temporary="true" nameIsGenerated="true">
+      <module name="autoparams" />
+      <option name="VM_PARAMETERS" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" value="thuan.handsome.autoparams.main" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Kotlin.thuan.handsome.autoparams.main" />
+      <item itemvalue="Kotlin.thuan.handsome.autoparams.MainKt" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Kotlin.thuan.handsome.autoparams.MainKt" />
+        <item itemvalue="Kotlin.thuan.handsome.autoparams.main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cd0db953-6eca-40c8-a91f-5b06b694809b" name="Default Changelist" comment="" />
+      <created>1575767408848</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1575767408848</updated>
+      <workItem from="1575767411407" duration="595000" />
+      <workItem from="1575768019071" duration="2236000" />
+      <workItem from="1575770463188" duration="120000" />
+      <workItem from="1575770596159" duration="7000" />
+      <workItem from="1575772495807" duration="446000" />
+      <workItem from="1575777115621" duration="716000" />
+      <workItem from="1575778021843" duration="3000" />
+      <workItem from="1575920530309" duration="1207000" />
+      <workItem from="1575954781494" duration="5650000" />
+      <workItem from="1575994469053" duration="8465000" />
+      <workItem from="1576034465616" duration="4770000" />
+      <workItem from="1576039256916" duration="13294000" />
+      <workItem from="1576056101924" duration="8862000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="418" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1576038308055">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="418" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1576038308055" />
+    <state x="734" y="259" width="442" height="558" key="#com.intellij.ide.util.MemberChooser" timestamp="1576051584756">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="734" y="259" width="442" height="558" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1080@0.0.1920.1080" timestamp="1576051584756" />
+    <state x="562" y="209" width="785" height="657" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog" timestamp="1575767488799">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="562" y="209" width="785" height="657" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1575767488799" />
+    <state x="672" y="61" width="566" height="953" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1576002933854">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="672" y="61" width="566" height="953" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1576002933854" />
+    <state x="1090" y="256" width="489" height="563" key="DetectedRootsChooserDialog" timestamp="1575955088900">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="1090" y="256" width="489" height="563" key="DetectedRootsChooserDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1575955088900" />
+    <state x="1084" y="283" width="502" height="501" key="FileChooserDialogImpl" timestamp="1576038304916">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="1084" y="283" width="502" height="501" key="FileChooserDialogImpl/0.0.1920.1080@0.0.1920.1080" timestamp="1576038304916" />
+    <state width="1874" height="288" key="GridCell.Tab.0.bottom" timestamp="1576065618556">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="288" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1576065618556" />
+    <state width="1874" height="288" key="GridCell.Tab.0.center" timestamp="1576065618556">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="288" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1576065618556" />
+    <state width="1874" height="288" key="GridCell.Tab.0.left" timestamp="1576065618555">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="288" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1576065618555" />
+    <state width="1874" height="288" key="GridCell.Tab.0.right" timestamp="1576065618556">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="288" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1576065618556" />
+    <state x="449" y="175" key="SettingsEditor" timestamp="1576035209750">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="449" y="175" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1576035209750" />
+    <state x="100" y="100" width="1720" height="880" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1576065289271">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="100" y="100" width="1720" height="880" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1576065289271" />
+    <state x="616" y="367" key="com.intellij.ide.util.TipDialog" timestamp="1575767418452">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="616" y="367" key="com.intellij.ide.util.TipDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1575767418452" />
+    <state x="605" y="277" width="1119" height="592" key="find.popup" timestamp="1576060164808">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="605" y="277" width="1119" height="592" key="find.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1576060164808" />
+    <state x="624" y="248" key="run.anything.popup" timestamp="1576046126979">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="624" y="248" key="run.anything.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1576046126979" />
+    <state x="623" y="239" width="672" height="678" key="search.everywhere.popup" timestamp="1576060024674">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="623" y="239" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1576060024674" />
+  </component>
+</project>
