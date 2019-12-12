@@ -1,125 +1,51 @@
 package thuan.handsome.autoparams
 
-import krangl.*
+import krangl.DataFrame
+import krangl.readCSV
 import org.apache.commons.csv.CSVFormat
-import thuan.handsome.autoparams.lightgbm.Booster
-import thuan.handsome.autoparams.lightgbm.Dataset
-import kotlin.math.min
-import kotlin.test.assertEquals
-
-fun prepareFolds(n: Int, nFolds: Int): Pair<List<IntArray>, List<IntArray>> {
-	val indexes = IntRange(1, n).shuffled()
-	val foldSize = n / nFolds
-
-	val validSets = ArrayList<IntArray>(nFolds)
-	for (i in 0 until n step foldSize) {
-		val validSet = indexes.subList(i, min(i + foldSize, n))
-		validSets.add(validSet.toIntArray())
-	}
-
-	val trainSets = ArrayList<IntArray>(nFolds)
-	for ((i, validSet) in validSets.withIndex()) {
-		val trainSet = ArrayList<Int>(validSet.size)
-		for ((j, otherValidSet) in validSets.withIndex()) {
-			if (i != j) {
-				trainSet.addAll(otherValidSet.asSequence())
-			}
-		}
-		trainSets.add(trainSet.toIntArray())
-	}
-
-	return Pair(trainSets, validSets)
-}
-
-fun crossValidate(params: Map<String, Any>, df: DataFrame, labelIndex: Int, rounds: Int, nFolds: Int): DoubleArray {
-	val (trainSets, validSets) = prepareFolds(df.nrow, nFolds)
-	val scores = ArrayList<Double>(trainSets.size)
-
-	for ((trainSet, validSet) in (trainSets zip validSets)) {
-		val trainDF = df.slice(*trainSet)
-		val (trainData, trainLabel) = getXY(trainDF, labelIndex)
-		val dataset = Dataset.from(trainData, trainLabel)
-		val booster = Booster.train(dataset, params, rounds)
-
-		val validDF = df.slice(*validSet)
-		val (validData, validLabel) = getXY(validDF, labelIndex)
-		val preds = booster.predict(validData)
-		scores.add(f1score(preds.toBinaryArray(), validLabel))
-	}
-
-	return scores.toDoubleArray()
-}
-
-fun DoubleArray.toBinaryArray(): IntArray {
-	return IntArray(this.size) {
-		if (this[it] >= 0.5) 1 else 0
-	}
-}
-
-fun f1score(predicted: IntArray, target: IntArray): Double {
-	assertEquals(predicted.size, target.size)
-	val right = intArrayOf(0, 0)
-	val wrong = intArrayOf(0, 0)
-	val n = predicted.size
-
-	repeat(n) {
-		if (target[it] == predicted[it]) {
-			right[predicted[it]] += 1
-		} else {
-			wrong[predicted[it]] += 1
-		}
-	}
-
-	if (right[0] == n) {
-		return 1.0
-	}
-	if (right[1] == 0) {
-		return 0.0
-	}
-
-	val precision = right[1].toDouble() / (right[1] + wrong[1])
-	val recall = right[1].toDouble() / (right[1] + wrong[0])
-	return 2 * (precision * recall) / (precision + recall)
-}
+import thuan.handsome.lightgbm.cv
+import thuan.handsome.lightgbm.getXY
+import thuan.handsome.lightgbm.metric.f1score
+import thuan.handsome.lightgbm.toBinaryArray
+import thuan.handsome.lightgbm.train
 
 fun main() {
-	val df = DataFrame.readCSV("data/gecco2018_water_train.csv", format = CSVFormat.DEFAULT.withNullString(""))
-	df.print(maxRows = 10)
-	val cv = crossValidate(mapOf("objective" to "binary"), df, 0, 100, 5)
-	print(cv.joinToString(" "))
+	val params = mapOf(
+		"objective" to "binary",
+		"verbose" to -1,
+		"num_leaves" to 100,
+		"feature_fraction" to 0.8,
+		"bagging_fraction" to 0.8,
+		"max_depth" to 30,
+		"min_split_gain" to 0.5,
+		"min_child_weight" to 1,
+		"is_unbalance" to true
+	)
 
+	var start = System.currentTimeMillis()
+	val trainDF = DataFrame.readCSV("data/gecco2018_water_train.csv", format = CSVFormat.DEFAULT.withNullString(""))
+	val (trainData, trainLabel) = getXY(trainDF, 0)
+	println("IO Time: ${System.currentTimeMillis() - start}")
+	start = System.currentTimeMillis()
 
-	// val (data, label) = getXY(df, 0)
-	//
-	// val dataset = Dataset.from(data, label)
-	// val booster = Booster.train(dataset, mapOf(
-	// 	"objective" to "binary"
-	// ), 300)
-	// booster.save("model.txt")
-	//
-	// val preds = booster.predict(data)
-	// println(preds.toBinaryArray().sum())
-	// println(f1score(preds.toBinaryArray(), label))
-}
+	val scores = cv(params, trainData, trainLabel, 100, 5, ::f1score)
+	println("CV = ${scores.joinToString(" ")}")
+	println("CV Time: ${System.currentTimeMillis() - start}")
+	start = System.currentTimeMillis()
 
-private fun getXY(df: DataFrame, labelIndex: Int): Pair<Array<DoubleArray>, IntArray> {
-	val data = Array(df.nrow) {
-		DoubleArray(df.ncol - 1) {
-			Double.NaN
-		}
-	}
-	val label = IntArray(df.nrow)
+	val booster = train(params, trainData, trainLabel, 100)
+	val trainedPreds = booster.predict(trainData).toBinaryArray()
+	println("Train F1 = ${f1score(trainedPreds, trainLabel)}")
+	println("Train Time: ${System.currentTimeMillis() - start}")
+	start = System.currentTimeMillis()
 
-	for ((rowIndex, row) in df.rows.withIndex()) {
-		for ((index, value) in row.values.withIndex()) {
-			if (index == labelIndex) {
-				label[rowIndex] = value as Int
-			} else if (value != null) {
-				data[rowIndex][index - 1] = value as Double
-			}
-		}
-	}
+	val testDF = DataFrame.readCSV("data/gecco2018_water_test.csv", format = CSVFormat.DEFAULT.withNullString(""))
+	val (testData, testLabel) = getXY(testDF, 0)
+	println("IO Test Time: ${System.currentTimeMillis() - start}")
+	start = System.currentTimeMillis()
 
-	return Pair(data, label)
+	val testPreds = booster.predict(testData).toBinaryArray()
+	println("Test F1 = ${f1score(testPreds, testLabel)}")
+	println("Test Time: ${System.currentTimeMillis() - start}")
 }
 

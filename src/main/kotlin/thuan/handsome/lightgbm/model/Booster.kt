@@ -1,14 +1,18 @@
-package thuan.handsome.autoparams.lightgbm
+package thuan.handsome.lightgbm.model
 
 import kotlin.test.assertEquals
 
 class Booster(dataset: Dataset, params: String) : CObject(), AutoCloseable {
 	companion object {
-		fun train(dataset: Dataset, params: Map<String, Any>, rounds: Int): Booster {
+		fun fit(params: Map<String, Any>, dataset: Dataset, rounds: Int): Booster {
 			val objective = params.getOrDefault("objective", "<empty>")
-			assertEquals("binary", objective, "Objective $objective is not yet supported! Only 'binary' is supported for now, sorry!")
+			assertEquals(
+				"binary",
+				objective,
+				"Objective $objective is not yet supported! Only 'binary' is supported for now, sorry!"
+			)
 
-			val booster = Booster(dataset, params.entries.joinToString(separator = " ") { "${it.key}=${it.value}" })
+			val booster = Booster(dataset, params.map { "${it.key}=${it.value}" }.joinToString(separator = " "))
 			val intPointer = API.new_int32_tp()
 			repeat(rounds) {
 				assertEquals(0, API.LGBM_BoosterUpdateOneIter(booster.handle.getVoidSinglePointer(), intPointer))
@@ -27,18 +31,20 @@ class Booster(dataset: Dataset, params: String) : CObject(), AutoCloseable {
 		val predPointer = API.new_doubleArray(1)
 		val longPointer = 1.toLongPointer()
 
-		assertEquals(0, API.LGBM_BoosterPredictForMatSingleRow(
-			this.handle.getVoidSinglePointer(),
-			nativePointer.toVoidPointer(),
-			API.C_API_DTYPE_FLOAT64,
-			row.size,
-			1,
-			API.C_API_PREDICT_NORMAL,
-			0,
-			"",
-			longPointer,
-			predPointer
-		))
+		assertEquals(
+			0, API.LGBM_BoosterPredictForMatSingleRow(
+				this.handle.getVoidSinglePointer(),
+				nativePointer.toVoidPointer(),
+				API.C_API_DTYPE_FLOAT64,
+				row.size,
+				1,
+				API.C_API_PREDICT_NORMAL,
+				0,
+				"",
+				longPointer,
+				predPointer
+			)
+		)
 
 		val pred = API.doubleArray_getitem(predPointer, 0)
 		API.delete_doubleArray(nativePointer)
@@ -53,19 +59,21 @@ class Booster(dataset: Dataset, params: String) : CObject(), AutoCloseable {
 		val predPointer = API.new_doubleArray(data.size)
 		val longPointer = data.size.toLongPointer()
 
-		assertEquals(0, API.LGBM_BoosterPredictForMat(
-			this.handle.getVoidSinglePointer(),
-			nativePointer.toVoidPointer(),
-			API.C_API_DTYPE_FLOAT64,
-			data.size,
-			data[0].size,
-			1,
-			API.C_API_PREDICT_NORMAL,
-			0,
-			"",
-			longPointer,
-			predPointer
-		))
+		assertEquals(
+			0, API.LGBM_BoosterPredictForMat(
+				this.handle.getVoidSinglePointer(),
+				nativePointer.toVoidPointer(),
+				API.C_API_DTYPE_FLOAT64,
+				data.size,
+				data[0].size,
+				1,
+				API.C_API_PREDICT_NORMAL,
+				0,
+				"",
+				longPointer,
+				predPointer
+			)
+		)
 
 		val preds = DoubleArray(data.size) {
 			API.doubleArray_getitem(predPointer, it)

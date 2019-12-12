@@ -1,7 +1,7 @@
-package thuan.handsome.autoparams.lightgbm
+package thuan.handsome.lightgbm.model
 
 import com.microsoft.ml.lightgbm.*
-import thuan.handsome.autoparams.env.NativeLoader
+import thuan.handsome.lightgbm.env.NativeLoader
 
 typealias VoidDoublePointer = SWIGTYPE_p_p_void
 typealias LongPointer = SWIGTYPE_p_long_long
@@ -17,7 +17,7 @@ fun initNative() {
 }
 
 fun FloatPointer.toVoidPointer(): VoidPointer {
-    return API.float_to_voidp_ptr(this)
+	return API.float_to_voidp_ptr(this)
 }
 
 fun DoublePointer.toVoidPointer(): VoidPointer {

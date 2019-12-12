@@ -1,4 +1,4 @@
-package thuan.handsome.autoparams.lightgbm
+package thuan.handsome.lightgbm.model
 
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

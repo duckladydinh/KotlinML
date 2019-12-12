@@ -1,4 +1,4 @@
-package thuan.handsome.autoparams.env
+package thuan.handsome.lightgbm.env
 
 import java.io.File
 import java.io.FileNotFoundException
@@ -81,21 +81,21 @@ class NativeLoader(topLevelResourcesPath: String) : Serializable {
 	}
 
 	private fun extractResourceFromPath(libName: String, prefix: String) {
-		val temp = File(tempDir.path + File.separator + libName)
-		temp.createNewFile()
-		temp.deleteOnExit()
-		if (!temp.exists()) {
+		val tmp = File(tempDir.path + File.separator + libName).apply {
+			createNewFile()
+			deleteOnExit()
+		}
+		if (!tmp.exists()) {
 			throw FileNotFoundException(
-				String.format(
-					"Temporary file %s could not be created. Make sure you can write to this location.",
-					temp.absolutePath
-				)
+				"Temporary file ${tmp.absolutePath} could not be created. Make sure you can write to this location."
 			)
 		}
+
 		val path = prefix + libName
 		val inStream = NativeLoader::class.java.getResourceAsStream(path)
-			?: throw FileNotFoundException(String.format("Could not find resource %s in jar.", path))
-		val outStream = FileOutputStream(temp)
+			?: throw FileNotFoundException("Could not find resource $path in jar.")
+
+		val outStream = FileOutputStream(tmp)
 		val buffer = ByteArray(1 shl 18)
 		var bytesRead: Int
 		try {
