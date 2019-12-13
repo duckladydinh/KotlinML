@@ -45,7 +45,7 @@ fun makeFolds(n: Int, nFolds: Int): List<Pair<List<Int>, List<Int>>> {
 		}
 
 	val trainSets = ArrayList<List<Int>>(nFolds)
-	for ((i, validSet) in validSets.withIndex()) {
+	for (i in validSets.indices) {
 		val trainSet = validSets.slice(IntRange(0, validSets.size - 1) - i).flatten()
 		trainSets.add(trainSet)
 	}
