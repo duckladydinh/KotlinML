@@ -1,5 +1,8 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 buildscript {
     ext {
+        osShortName = Os.isFamily(Os.FAMILY_WINDOWS) ? 'win' : Os.isFamily(Os.FAMILY_UNIX) ? 'linux' : 'macos'
         kotlinVersion = '1.3.61'
     }
 
@@ -28,7 +31,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
     implementation "de.mpicbg.scicomp:krangl:+"
 
-    implementation name: "lightgbmlib_linux"
+    implementation name: "lightgbmlib_$osShortName"
 }
 
 group = 'thuan.handsome'
