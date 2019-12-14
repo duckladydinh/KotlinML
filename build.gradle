@@ -32,6 +32,8 @@ dependencies {
     implementation "de.mpicbg.scicomp:krangl:+"
 
     implementation name: "lightgbmlib_$osShortName"
+
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
 }
 
 group = 'thuan.handsome'
