@@ -1,3 +1,3 @@
-# autoparams
-A Kotlin framework for Automated Hyperparameter Optimization
+# kotlinml
+A Kotlin framework for Machin Learning with Automated Hyperparameter Optimization
 
