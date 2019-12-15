@@ -1,3 +1,3 @@
 # kotlinml
-A Kotlin framework for Machin Learning with Automated Hyperparameter Optimization
+A Kotlin framework for Machine Learning with Automated Hyperparameter Optimization
 
