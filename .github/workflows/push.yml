@@ -1,11 +1,9 @@
 name: CI
 
-on:
-  schedule:
-    - cron: 0 0 * * * # daily at 00:00
+on: [push]
 
 jobs:
-  build:
+  build-fast:
 
     runs-on: ubuntu-latest
     steps:
@@ -15,4 +13,4 @@ jobs:
         java-version: 11
     - uses: eskatos/gradle-command-action@v1
       with:
-        arguments: clean build
+        arguments: clean build -x test
