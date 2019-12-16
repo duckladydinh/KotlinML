@@ -28,6 +28,7 @@ fun cv(
 		val validData = data.sliceArray(validSet)
 		val validLabel = label.sliceArray(validSet)
 		val preds = booster.predict(validData)
+		booster.close()
 
 		scores.add(metric.invoke(preds.toBinaryArray(), validLabel))
 	}
