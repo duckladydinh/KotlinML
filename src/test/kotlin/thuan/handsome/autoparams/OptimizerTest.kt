@@ -13,15 +13,14 @@ class OptimizerTest {
 	fun randomSearch() {
 		val (trainData, trainLabel) = getXY("/data/gecco2018_water_train.csv", 0)
 
-		val (parameters, _) = maximize(
-			fun(params: MutableMap<String, Any>): Double {
-				params.putAll(
-					mapOf(
-						"objective" to "binary",
-						"verbose" to -1,
-						"is_unbalance" to false
-					)
+		val (_parameters, _) = maximize(
+			fun(_params: Map<String, Any>): Double {
+				val params = _params + mapOf(
+					"objective" to "binary",
+					"verbose" to -1,
+					"is_unbalance" to false
 				)
+
 				val scores = cv(params, trainData, trainLabel, 30, 5, ::f1score)
 				return scores.min()!!
 			}, listOf(
@@ -32,24 +31,21 @@ class OptimizerTest {
 				Param("min_child_weight", 1, 10, true)
 			), 30
 		)
-
-		parameters.putAll(
-			mapOf(
-				"objective" to "binary",
-				"verbose" to -1,
-				"is_unbalance" to false
-			)
+		val parameters = _parameters + mapOf(
+			"objective" to "binary",
+			"verbose" to -1,
+			"is_unbalance" to false
 		)
 
 		val booster = train(parameters, trainData, trainLabel, 30)
 		val trainedPreds = booster.predict(trainData).toBinaryArray()
 
-		LOGGER.info {"Train F1 = ${f1score(trainedPreds, trainLabel)}"}
+		LOGGER.info { "Train F1 = ${f1score(trainedPreds, trainLabel)}" }
 
 		val (testData, testLabel) = getXY("/data/gecco2018_water_test.csv", 0)
 
 		val testPreds = booster.predict(testData).toBinaryArray()
-		LOGGER.info {"Test F1 = ${f1score(testPreds, testLabel)}"}
+		LOGGER.info { "Test F1 = ${f1score(testPreds, testLabel)}" }
 
 		booster.close()
 	}

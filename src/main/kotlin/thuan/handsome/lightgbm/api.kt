@@ -1,6 +1,5 @@
 package thuan.handsome.lightgbm
 
-import krangl.DataFrame
 import thuan.handsome.lightgbm.model.Booster
 import thuan.handsome.lightgbm.model.Dataset
 

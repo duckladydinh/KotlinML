@@ -45,6 +45,7 @@ version = '1.0-SNAPSHOT'
 
 //noinspection GrUnresolvedAccess
 [clean, cleanTest].each {
+    //noinspection GrUnresolvedAccess
     it.doFirst {
         println "Cleaning previous logs!"
         delete "logs"
@@ -52,6 +53,7 @@ version = '1.0-SNAPSHOT'
 }
 
 compileKotlin {
+
     //noinspection GrUnresolvedAccess
     kotlinOptions {
         jvmTarget = "11"
