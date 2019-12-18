@@ -1,5 +1,6 @@
 package thuan.handsome.lightgbm.model
 
+import koma.matrix.Matrix
 import kotlin.test.assertEquals
 
 class Booster(dataset: Dataset, params: String) : CObject(), AutoCloseable {
@@ -54,18 +55,20 @@ class Booster(dataset: Dataset, params: String) : CObject(), AutoCloseable {
 		return pred
 	}
 
-	fun predict(data: Array<DoubleArray>): DoubleArray {
+	fun predict(data: Matrix<Double>): IntArray {
 		val nativePointer = data.toNativeDoubleArray()
-		val predPointer = API.new_doubleArray(data.size)
-		val longPointer = data.size.toLongPointer()
+
+		val rows = data.numRows()
+		val predPointer = API.new_doubleArray(rows)
+		val longPointer = rows.toLongPointer()
 
 		assertEquals(
 			0, API.LGBM_BoosterPredictForMat(
 				this.handle.getVoidSinglePointer(),
 				nativePointer.toVoidPointer(),
 				API.C_API_DTYPE_FLOAT64,
-				data.size,
-				data[0].size,
+				rows,
+				data.numCols(),
 				1,
 				API.C_API_PREDICT_NORMAL,
 				0,
@@ -75,8 +78,8 @@ class Booster(dataset: Dataset, params: String) : CObject(), AutoCloseable {
 			)
 		)
 
-		val preds = DoubleArray(data.size) {
-			API.doubleArray_getitem(predPointer, it)
+		val preds = IntArray(rows) {
+			if (API.doubleArray_getitem(predPointer, it) >= 0.5) 1 else 0
 		}
 
 		API.delete_doubleArray(nativePointer)

@@ -31,7 +31,7 @@ class ClassifierTest {
 		start = System.currentTimeMillis()
 
 		val booster = train(params, trainData, trainLabel, 100)
-		val trainedPreds = booster.predict(trainData).toBinaryArray()
+		val trainedPreds = booster.predict(trainData)
 		LOGGER.info { "Train F1 = ${f1score(trainedPreds, trainLabel)}" }
 		LOGGER.info { "Train Time: ${System.currentTimeMillis() - start}" }
 		start = System.currentTimeMillis()
@@ -40,7 +40,7 @@ class ClassifierTest {
 		LOGGER.info { "IO Test Time: ${System.currentTimeMillis() - start}" }
 		start = System.currentTimeMillis()
 
-		val testPreds = booster.predict(testData).toBinaryArray()
+		val testPreds = booster.predict(testData)
 		LOGGER.info { "Test F1 = ${f1score(testPreds, testLabel)}" }
 		LOGGER.info { "Test Time: ${System.currentTimeMillis() - start}" }
 

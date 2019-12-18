@@ -1,41 +1,51 @@
 package thuan.handsome.lightgbm
 
+import koma.internal.default.generated.matrix.DefaultDoubleMatrix
+import koma.matrix.Matrix
 import thuan.handsome.lightgbm.model.Booster
 import thuan.handsome.lightgbm.model.Dataset
 
-fun train(params: Map<String, Any>, data: Array<DoubleArray>, label: IntArray, rounds: Int): Booster {
+fun train(params: Map<String, Any>, data: Matrix<Double>, label: IntArray, rounds: Int): Booster {
 	val dataset = Dataset.from(data, label)
 	return Booster.fit(params, dataset, rounds)
 }
 
+fun slice(data: Matrix<Double>, rowIndexes: Collection<Int>): Matrix<Double> {
+	val mat = DefaultDoubleMatrix(rows = rowIndexes.size, cols = data.numCols())
+	for ((row, dataRow) in rowIndexes.withIndex()) {
+		mat.setRow(row, data.getRow(dataRow))
+	}
+	return mat
+}
+
 fun cv(
 	params: Map<String, Any>,
-	data: Array<DoubleArray>,
+	data: Matrix<Double>,
 	label: IntArray,
 	rounds: Int,
 	nFolds: Int,
 	metric: (IntArray, IntArray) -> Double
 ): DoubleArray {
-	val folds = makeFolds(data.size, nFolds)
+	val folds = makeFolds(data.numRows(), nFolds)
 	val scores = ArrayList<Double>(folds.size)
 
 	for ((trainSet, validSet) in folds) {
-		val trainData = data.sliceArray(trainSet)
+		val trainData = slice(data, trainSet)
 		val trainLabel = label.sliceArray(trainSet)
 		val booster = train(params, trainData, trainLabel, rounds)
 
-		val validData = data.sliceArray(validSet)
+		val validData = slice(data, validSet)
 		val validLabel = label.sliceArray(validSet)
 		val preds = booster.predict(validData)
 		booster.close()
 
-		scores.add(metric.invoke(preds.toBinaryArray(), validLabel))
+		scores.add(metric.invoke(preds, validLabel))
 	}
 
 	return scores.toDoubleArray()
 }
 
-fun makeFolds(n: Int, nFolds: Int): List<Pair<List<Int>, List<Int>>> {
+private fun makeFolds(n: Int, nFolds: Int): List<Pair<List<Int>, List<Int>>> {
 	val validSets = IntRange(0, n - 1).shuffled().withIndex()
 		.groupBy { it.index % nFolds }
 		.map { indexed ->
@@ -51,10 +61,4 @@ fun makeFolds(n: Int, nFolds: Int): List<Pair<List<Int>, List<Int>>> {
 	}
 
 	return trainSets zip validSets
-}
-
-fun DoubleArray.toBinaryArray(): IntArray {
-	return IntArray(this.size) {
-		if (this[it] >= 0.5) 1 else 0
-	}
 }

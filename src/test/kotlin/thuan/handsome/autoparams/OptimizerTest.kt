@@ -3,7 +3,6 @@ package thuan.handsome.autoparams
 import org.junit.Test
 import thuan.handsome.lightgbm.cv
 import thuan.handsome.lightgbm.metric.f1score
-import thuan.handsome.lightgbm.toBinaryArray
 import thuan.handsome.lightgbm.train
 import thuan.handsome.utils.LOGGER
 import thuan.handsome.utils.getXY
@@ -38,13 +37,13 @@ class OptimizerTest {
 		)
 
 		val booster = train(parameters, trainData, trainLabel, 30)
-		val trainedPreds = booster.predict(trainData).toBinaryArray()
+		val trainedPreds = booster.predict(trainData)
 
 		LOGGER.info { "Train F1 = ${f1score(trainedPreds, trainLabel)}" }
 
 		val (testData, testLabel) = getXY("/data/gecco2018_water_test.csv", 0)
 
-		val testPreds = booster.predict(testData).toBinaryArray()
+		val testPreds = booster.predict(testData)
 		LOGGER.info { "Test F1 = ${f1score(testPreds, testLabel)}" }
 
 		booster.close()

@@ -1,6 +1,7 @@
 package thuan.handsome.lightgbm.model
 
 import com.microsoft.ml.lightgbm.*
+import koma.matrix.Matrix
 import thuan.handsome.lightgbm.env.NativeLoader
 
 typealias VoidDoublePointer = SWIGTYPE_p_p_void
@@ -50,16 +51,13 @@ fun DoubleArray.toNativeDoubleArray(): DoublePointer {
 	return nativePointer
 }
 
-fun Array<DoubleArray>.toNativeDoubleArray(): DoublePointer {
-	val rows = this.size
-	val cols = this[0].size
-	val nativePointer = API.new_doubleArray(rows * cols)
+fun Matrix<Double>.toNativeDoubleArray(): DoublePointer {
+	val nativePointer = API.new_doubleArray(this.size)
 
-	for ((rowIndex, row) in this.withIndex()) {
-		for ((index, value) in row.withIndex()) {
-			API.doubleArray_setitem(nativePointer, rowIndex * cols + index, value)
-		}
+	this.toIterable().withIndex().forEach {
+		API.doubleArray_setitem(nativePointer, it.index, it.value)
 	}
+
 	return nativePointer
 }
 

@@ -1,16 +1,17 @@
 package thuan.handsome.lightgbm.model
 
+import koma.matrix.Matrix
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class Dataset : CObject() {
 	companion object {
 		@JvmStatic
-		fun from(data: Array<DoubleArray>, label: IntArray): Dataset {
+		fun from(data: Matrix<Double>, label: IntArray): Dataset {
 			assertTrue(label.isNotEmpty())
 			assertEquals(
-				data.size, label.size,
-				"The number of rows must equal the number of predictions. |X| = ${data.size} != |y| = ${label.size}"
+				data.numRows(), label.size,
+				"The number of rows must equal the number of predictions. |X| = ${data.numRows()} != |y| = ${label.size}"
 			)
 			assertTrue(label.min()!! >= 0, "Only binary classification is currently supported")
 			assertTrue(label.max()!! <= 1, "Only binary classification is currently supported")
@@ -34,13 +35,13 @@ class Dataset : CObject() {
 		API.delete_floatArray(nativePointer)
 	}
 
-	private fun setData(data: Array<DoubleArray>) {
+	private fun setData(data: Matrix<Double>) {
 		val nativePointer = data.toNativeDoubleArray()
 		API.LGBM_DatasetCreateFromMat(
 			nativePointer.toVoidPointer(),
 			API.C_API_DTYPE_FLOAT64,
-			data.size,
-			data[0].size,
+			data.numRows(),
+			data.numCols(),
 			1,
 			"",
 			null,
