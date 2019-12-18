@@ -1,21 +1,13 @@
 package thuan.handsome.lightgbm
 
-import koma.internal.default.generated.matrix.DefaultDoubleMatrix
 import koma.matrix.Matrix
 import thuan.handsome.lightgbm.model.Booster
 import thuan.handsome.lightgbm.model.Dataset
+import thuan.handsome.utils.slice
 
 fun train(params: Map<String, Any>, data: Matrix<Double>, label: IntArray, rounds: Int): Booster {
 	val dataset = Dataset.from(data, label)
 	return Booster.fit(params, dataset, rounds)
-}
-
-fun slice(data: Matrix<Double>, rowIndexes: Collection<Int>): Matrix<Double> {
-	val mat = DefaultDoubleMatrix(rows = rowIndexes.size, cols = data.numCols())
-	for ((row, dataRow) in rowIndexes.withIndex()) {
-		mat.setRow(row, data.getRow(dataRow))
-	}
-	return mat
 }
 
 fun cv(

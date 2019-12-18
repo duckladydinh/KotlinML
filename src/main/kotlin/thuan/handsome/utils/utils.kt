@@ -9,7 +9,7 @@ import org.apache.commons.csv.CSVFormat
 
 private fun getXY(df: DataFrame, labelIndex: Int): Pair<Matrix<Double>, IntArray> {
 	val cols = df.ncol - 1
-	val data =  DefaultDoubleMatrix(df.nrow, cols)
+	val data = DefaultDoubleMatrix(df.nrow, cols)
 	val label = IntArray(df.nrow)
 
 	for ((rowIndex, row) in df.rows.withIndex()) {
@@ -42,4 +42,12 @@ fun getXY(csvMatrixPath: String, labelColumnIndex: Int): Pair<Matrix<Double>, In
 	)
 
 	return getXY(df, labelColumnIndex)
+}
+
+fun slice(data: Matrix<Double>, rowIndexes: Collection<Int>): Matrix<Double> {
+	val mat = DefaultDoubleMatrix(rows = rowIndexes.size, cols = data.numCols())
+	for ((row, dataRow) in rowIndexes.withIndex()) {
+		mat.setRow(row, data.getRow(dataRow))
+	}
+	return mat
 }
