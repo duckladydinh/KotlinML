@@ -4,7 +4,7 @@ import kotlin.random.Random
 import kotlin.test.assertTrue
 
 data class Param(val name: String, val lowerBound: Any, val upperBound: Any, val isInt: Boolean = false) {
-	var value = if (!isInt) Random.nextDouble(lowerBound as Double, upperBound as Double)
+	var value: Any = if (!isInt) Random.nextDouble(lowerBound as Double, upperBound as Double)
 	else Random.nextInt(lowerBound as Int, upperBound as Int)
 }
 
