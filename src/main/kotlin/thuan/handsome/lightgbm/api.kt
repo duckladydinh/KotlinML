@@ -54,25 +54,6 @@ fun makeFolds(n: Int, nFolds: Int): List<Pair<List<Int>, List<Int>>> {
 	return trainSets zip validSets
 }
 
-fun getXY(df: DataFrame, labelIndex: Int): Pair<Array<DoubleArray>, IntArray> {
-	val data = Array(df.nrow) {
-		DoubleArray(df.ncol - 1) { Double.NaN }
-	}
-	val label = IntArray(df.nrow)
-
-	for ((rowIndex, row) in df.rows.withIndex()) {
-		for ((index, value) in row.values.withIndex()) {
-			if (index == labelIndex) {
-				label[rowIndex] = value as Int
-			} else if (value != null) {
-				data[rowIndex][index - 1] = value as Double
-			}
-		}
-	}
-
-	return Pair(data, label)
-}
-
 fun DoubleArray.toBinaryArray(): IntArray {
 	return IntArray(this.size) {
 		if (this[it] >= 0.5) 1 else 0

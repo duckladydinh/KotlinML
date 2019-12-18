@@ -19,8 +19,9 @@ repositories {
 
     flatDir {
         dir 'libs/lightgbm'
-        dir 'libs/smac'
     }
+
+    maven { url "https://kotlin.bintray.com/kotlin-numpy" }
 }
 
 dependencies {
@@ -29,6 +30,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
     implementation "de.mpicbg.scicomp:krangl:+"
 
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.0' // logging implementation
+    implementation "io.github.microutils:kotlin-logging:1.7.7" // logging api
+
+    implementation("org.jetbrains:kotlin-numpy:0.1.0")
 
     implementation name: "lightgbmlib_linux"
 
@@ -37,6 +42,14 @@ dependencies {
 
 group = 'thuan.handsome'
 version = '1.0-SNAPSHOT'
+
+//noinspection GrUnresolvedAccess
+[clean, cleanTest].each {
+    it.doFirst {
+        println "Cleaning previous logs!"
+        delete "logs"
+    }
+}
 
 compileKotlin {
     //noinspection GrUnresolvedAccess

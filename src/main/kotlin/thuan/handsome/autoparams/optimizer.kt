@@ -1,15 +1,12 @@
 package thuan.handsome.autoparams
 
+import thuan.handsome.utils.LOGGER
 import kotlin.random.Random
 import kotlin.test.assertTrue
 
 data class Param(val name: String, val lowerBound: Any, val upperBound: Any, val isInt: Boolean = false) {
 	var value: Any = if (!isInt) Random.nextDouble(lowerBound as Double, upperBound as Double)
 	else Random.nextInt(lowerBound as Int, upperBound as Int)
-}
-
-fun makeParams(params: List<Param>): Map<String, Any> {
-	return params.map { it.name to it.value }.toMap()
 }
 
 fun maximize(
@@ -22,7 +19,7 @@ fun maximize(
 	var bestY = Double.NEGATIVE_INFINITY
 	lateinit var bestX: Map<String, Any>
 
-	repeat(maxEval) {
+	for (iter in 1..maxEval) {
 		val paramsMap = params.map {
 			it.name to if (!it.isInt) Random.nextDouble(
 				it.lowerBound as Double,
@@ -37,7 +34,7 @@ fun maximize(
 			bestY = res
 			bestX = paramsMap
 		}
-		println("Iter ${it + 1} = $res | Best = $bestY")
+		LOGGER.info("Iter $iter = $res | Best = $bestY")
 	}
 
 	return Pair(bestX.toMutableMap(), bestY)
