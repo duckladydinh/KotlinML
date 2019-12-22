@@ -3,7 +3,7 @@ package thuan.handsome.lightgbm
 import koma.matrix.Matrix
 import thuan.handsome.lightgbm.model.Booster
 import thuan.handsome.lightgbm.model.Dataset
-import thuan.handsome.utils.slice
+import thuan.handsome.ml.slice
 
 fun train(params: Map<String, Any>, data: Matrix<Double>, label: IntArray, rounds: Int): Booster {
 	val dataset = Dataset.from(data, label)

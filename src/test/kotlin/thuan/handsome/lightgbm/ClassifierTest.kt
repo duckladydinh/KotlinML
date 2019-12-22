@@ -1,9 +1,9 @@
 package thuan.handsome.lightgbm
 
 import org.junit.Test
-import thuan.handsome.lightgbm.metric.f1score
-import thuan.handsome.utils.LOGGER
-import thuan.handsome.utils.getXY
+import thuan.handsome.ml.f1score
+import thuan.handsome.ml.LOGGER
+import thuan.handsome.ml.getXY
 
 class ClassifierTest {
 	@Test
@@ -21,7 +21,10 @@ class ClassifierTest {
 		)
 
 		var start = System.currentTimeMillis()
-		val (trainData, trainLabel) = getXY("/data/gecco2018_water_train.csv", 0)
+		val (trainData, trainLabel) = getXY(
+			"/data/gecco2018_water_train.csv",
+			0
+		)
 		LOGGER.info { "IO Time: ${System.currentTimeMillis() - start}" }
 		start = System.currentTimeMillis()
 
@@ -32,16 +35,25 @@ class ClassifierTest {
 
 		val booster = train(params, trainData, trainLabel, 100)
 		val trainedPreds = booster.predict(trainData)
-		LOGGER.info { "Train F1 = ${f1score(trainedPreds, trainLabel)}" }
+		LOGGER.info { "Train F1 = ${f1score(
+			trainedPreds,
+			trainLabel
+		)}" }
 		LOGGER.info { "Train Time: ${System.currentTimeMillis() - start}" }
 		start = System.currentTimeMillis()
 
-		val (testData, testLabel) = getXY("/data/gecco2018_water_test.csv", 0)
+		val (testData, testLabel) = getXY(
+			"/data/gecco2018_water_test.csv",
+			0
+		)
 		LOGGER.info { "IO Test Time: ${System.currentTimeMillis() - start}" }
 		start = System.currentTimeMillis()
 
 		val testPreds = booster.predict(testData)
-		LOGGER.info { "Test F1 = ${f1score(testPreds, testLabel)}" }
+		LOGGER.info { "Test F1 = ${f1score(
+			testPreds,
+			testLabel
+		)}" }
 		LOGGER.info { "Test Time: ${System.currentTimeMillis() - start}" }
 
 		booster.close()

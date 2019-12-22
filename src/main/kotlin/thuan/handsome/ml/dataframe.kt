@@ -1,4 +1,4 @@
-package thuan.handsome.utils
+package thuan.handsome.ml
 
 import koma.internal.default.generated.matrix.DefaultDoubleMatrix
 import koma.matrix.Matrix
@@ -37,7 +37,11 @@ val LOGGER = KotlinLogging.logger {}
 
 fun getXY(csvMatrixPath: String, labelColumnIndex: Int): Pair<Matrix<Double>, IntArray> {
 	val df = DataFrame.readCSV(
-		if (csvMatrixPath.startsWith("/")) PathIO.getExternalPathForResource(csvMatrixPath) else csvMatrixPath,
+		if (csvMatrixPath.startsWith("/"))
+			PathIO.getExternalPathForResource(csvMatrixPath)
+		else
+			csvMatrixPath
+		,
 		format = CSVFormat.DEFAULT.withNullString("")
 	)
 

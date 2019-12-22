@@ -1,4 +1,4 @@
-package thuan.handsome.lightgbm.metric
+package thuan.handsome.ml
 
 import kotlin.test.assertEquals
 
