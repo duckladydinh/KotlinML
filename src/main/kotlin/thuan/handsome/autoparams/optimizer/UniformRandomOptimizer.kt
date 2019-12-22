@@ -1,9 +1,9 @@
 package thuan.handsome.autoparams.optimizer
 
-import thuan.handsome.autoparams.optimizer.Optimizer
 import thuan.handsome.autoparams.xspace.XSpace
+import thuan.handsome.ml.LOGGER
 
-class RandomOptimizer : Optimizer {
+class UniformRandomOptimizer : Optimizer {
 	override fun argMaximize(
 		func: (Map<String, Any>) -> Double,
 		xSpace: XSpace,
@@ -20,6 +20,8 @@ class RandomOptimizer : Optimizer {
 				bestY = y
 				bestX = x
 			}
+
+			LOGGER.info { "Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, y, bestY) }
 		}
 
 		return Pair(bestX, bestY)

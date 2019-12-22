@@ -1,7 +1,7 @@
 package thuan.handsome.autoparams
 
 import org.junit.Test
-import thuan.handsome.autoparams.optimizer.RandomOptimizer
+import thuan.handsome.autoparams.optimizer.UniformRandomOptimizer
 import thuan.handsome.autoparams.xspace.UniformXSpace
 import thuan.handsome.lightgbm.cv
 import thuan.handsome.ml.f1score
@@ -30,7 +30,7 @@ class OptimizerTest {
 		xSpace.addParam("min_split_gain", 0.0, 1.0)
 		xSpace.addParam("min_child_weight", 1.0, 10.0, false)
 
-		val optimizer = RandomOptimizer()
+		val optimizer = UniformRandomOptimizer()
 
 		val (params, _) = optimizer.argMaximize(
 			fun(params: Map<String, Any>): Double {
