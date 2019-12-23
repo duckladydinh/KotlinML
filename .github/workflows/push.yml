@@ -16,5 +16,5 @@ jobs:
   format-code:
     runs-on: ubuntu-latest
     steps:
+    - name: format Kotlin
       run: ./ktlint -F src/**/*.kt
-      shell: bash
