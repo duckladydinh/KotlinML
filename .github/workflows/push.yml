@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: format Kotlin
-      run: ls -l ..
+      run: printenv
   navigate:
     runs-on: ubuntu-latest
     steps:
