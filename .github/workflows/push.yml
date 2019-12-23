@@ -10,10 +10,6 @@ jobs:
     - uses: actions/setup-java@v1
       with:
         java-version: 11
-    - name: format Kotlin
-      run: |
-        ./ktlint -F src/**/*.kt
-        if [ $? -ne 0 ]; then exit 0; fi
     - uses: eskatos/gradle-command-action@v1
       with:
         arguments: clean build -x test
