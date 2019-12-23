@@ -8,9 +8,8 @@ jobs:
     steps:
     - name: format Kotlin
       run: |
-        cd kotlinml
-        ls
-        ./ktlint -F src/**/*.kt
+        ls -l
+        ls -l /
   build-fast:
     runs-on: ubuntu-latest
     steps:
