@@ -4,10 +4,8 @@ import org.junit.Test
 import thuan.handsome.autoparams.optimizer.UniformRandomOptimizer
 import thuan.handsome.autoparams.xspace.UniformXSpace
 import thuan.handsome.lightgbm.cv
-import thuan.handsome.ml.f1score
 import thuan.handsome.lightgbm.train
-import thuan.handsome.ml.LOGGER
-import thuan.handsome.ml.getXY
+import thuan.handsome.utils.*
 
 class OptimizerTest {
 	@Test
@@ -44,10 +42,12 @@ class OptimizerTest {
 		val booster = train(params, trainData, trainLabel, 30)
 		val trainedPreds = booster.predict(trainData)
 
-		LOGGER.info { "Train F1 = ${f1score(
-			trainedPreds,
-			trainLabel
-		)}" }
+		LOGGER.info {
+			"Train F1 = ${f1score(
+				trainedPreds,
+				trainLabel
+			)}"
+		}
 
 		val (testData, testLabel) = getXY(
 			"/data/gecco2018_water_test.csv",
@@ -55,10 +55,12 @@ class OptimizerTest {
 		)
 
 		val testPreds = booster.predict(testData)
-		LOGGER.info { "Test F1 = ${f1score(
-			testPreds,
-			testLabel
-		)}" }
+		LOGGER.info {
+			"Test F1 = ${f1score(
+				testPreds,
+				testLabel
+			)}"
+		}
 
 		booster.close()
 	}

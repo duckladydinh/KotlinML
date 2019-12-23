@@ -1,9 +1,7 @@
-package thuan.handsome.ml
-
-import kotlin.test.assertEquals
+package thuan.handsome.utils
 
 fun f1score(predicted: IntArray, target: IntArray): Double {
-	assertEquals(predicted.size, target.size)
+	assert(predicted.size == target.size) { "F1Score inputs have unequal sizes" }
 	// TN, TP, FN, FP
 	val stats = intArrayOf(0, 0, 0, 0)
 	val n = predicted.size

@@ -3,7 +3,7 @@ package thuan.handsome.lightgbm
 import koma.matrix.Matrix
 import thuan.handsome.lightgbm.model.Booster
 import thuan.handsome.lightgbm.model.Dataset
-import thuan.handsome.ml.slice
+import thuan.handsome.utils.sliceByRows
 
 fun train(params: Map<String, Any>, data: Matrix<Double>, label: IntArray, rounds: Int): Booster {
 	val dataset = Dataset.from(data, label)
@@ -22,11 +22,11 @@ fun cv(
 	val scores = ArrayList<Double>(folds.size)
 
 	for ((trainSet, validSet) in folds) {
-		val trainData = slice(data, trainSet)
+		val trainData = sliceByRows(data, trainSet)
 		val trainLabel = label.sliceArray(trainSet)
 		val booster = train(params, trainData, trainLabel, rounds)
 
-		val validData = slice(data, validSet)
+		val validData = sliceByRows(data, validSet)
 		val validLabel = label.sliceArray(validSet)
 		val preds = booster.predict(validData)
 		booster.close()

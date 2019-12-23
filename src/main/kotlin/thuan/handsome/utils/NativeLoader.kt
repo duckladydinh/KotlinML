@@ -1,9 +1,6 @@
-package thuan.handsome.lightgbm.env
+package thuan.handsome.utils
 
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.Serializable
+import java.io.*
 import java.nio.file.Files
 
 class NativeLoader(topLevelResourcesPath: String) : Serializable {
@@ -47,7 +44,8 @@ class NativeLoader(topLevelResourcesPath: String) : Serializable {
 	}
 
 	private val tempDir = Files.createTempDirectory("tmp").toFile().apply { deleteOnExit() }
-	private val resourcesPath = getResourcesPath(topLevelResourcesPath)
+	private val resourcesPath =
+		getResourcesPath(topLevelResourcesPath)
 	private var extractionDone = false
 
 

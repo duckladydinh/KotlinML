@@ -1,20 +1,17 @@
 package thuan.handsome.lightgbm.model
 
 import koma.matrix.Matrix
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class Dataset : CObject() {
 	companion object {
 		@JvmStatic
 		fun from(data: Matrix<Double>, label: IntArray): Dataset {
-			assertTrue(label.isNotEmpty())
-			assertEquals(
-				data.numRows(), label.size,
+			assert(label.isNotEmpty())
+			assert(data.numRows() == label.size) {
 				"The number of rows must equal the number of predictions. |X| = ${data.numRows()} != |y| = ${label.size}"
-			)
-			assertTrue(label.min()!! >= 0, "Only binary classification is currently supported")
-			assertTrue(label.max()!! <= 1, "Only binary classification is currently supported")
+			}
+			assert(label.min()!! >= 0) { "Only binary classification is currently supported" }
+			assert(label.max()!! <= 1) { "Only binary classification is currently supported" }
 
 			return Dataset().apply {
 				setData(data)

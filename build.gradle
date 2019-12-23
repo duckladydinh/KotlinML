@@ -19,6 +19,7 @@ repositories {
 
     flatDir {
         dir 'libs/lightgbm'
+        dir 'libs/lbfgsb'
     }
 
     maven { url "https://dl.bintray.com/kyonifer/maven" }
@@ -27,7 +28,6 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-    implementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
 
     implementation "com.kyonifer:koma-core-ejml:0.12"
     implementation "com.kyonifer:koma-plotting:0.12"
@@ -37,6 +37,7 @@ dependencies {
     implementation "io.github.microutils:kotlin-logging:1.7.7" // logging api
 
     implementation name: "lightgbmlib_linux"
+    implementation name: "lbfgsblib_linux"
 
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
 }

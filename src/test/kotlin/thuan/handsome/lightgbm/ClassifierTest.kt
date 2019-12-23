@@ -1,9 +1,7 @@
 package thuan.handsome.lightgbm
 
 import org.junit.Test
-import thuan.handsome.ml.f1score
-import thuan.handsome.ml.LOGGER
-import thuan.handsome.ml.getXY
+import thuan.handsome.utils.*
 
 class ClassifierTest {
 	@Test
@@ -35,10 +33,12 @@ class ClassifierTest {
 
 		val booster = train(params, trainData, trainLabel, 100)
 		val trainedPreds = booster.predict(trainData)
-		LOGGER.info { "Train F1 = ${f1score(
-			trainedPreds,
-			trainLabel
-		)}" }
+		LOGGER.info {
+			"Train F1 = ${f1score(
+				trainedPreds,
+				trainLabel
+			)}"
+		}
 		LOGGER.info { "Train Time: ${System.currentTimeMillis() - start}" }
 		start = System.currentTimeMillis()
 
@@ -50,10 +50,12 @@ class ClassifierTest {
 		start = System.currentTimeMillis()
 
 		val testPreds = booster.predict(testData)
-		LOGGER.info { "Test F1 = ${f1score(
-			testPreds,
-			testLabel
-		)}" }
+		LOGGER.info {
+			"Test F1 = ${f1score(
+				testPreds,
+				testLabel
+			)}"
+		}
 		LOGGER.info { "Test Time: ${System.currentTimeMillis() - start}" }
 
 		booster.close()
