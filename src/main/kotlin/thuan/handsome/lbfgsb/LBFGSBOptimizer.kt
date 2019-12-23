@@ -4,8 +4,8 @@ package thuan.handsome.lbfgsb
  * High-level wrapper for the L-BFGS-B algorithm
  */
 class LBFGSBOptimizer {
-	companion object {
-		/**
+    companion object {
+        /**
 		 * @param func - a differential function
 		 *
 		 * @param xZero - an initial guess
@@ -43,71 +43,72 @@ class LBFGSBOptimizer {
 		 *  @param callback (x, y, grads) - a method to call after each iteration
 		 */
 
-		fun minimize(
-			// most important inputs
-			func: (DoubleArray) -> Double,
-			xZero: DoubleArray,
-			bounds: List<Bound> = getUnbounds(xZero.size),
-			// algorithm's parameters
-			maxIterations: Int = 15000,
-			maxCorrections: Int = 10,
-			maxGradientNorm: Double = 1e-5,
-			funcReductionFactor: Double = 1e7,
-			// external parameters
-			verbose: Int = -1,
-			epsilon: Double = 1e-8,
-			callback: ((DoubleArray, Double, DoubleArray) -> Boolean)? = null
-		): Summary {
-			val diffFunc = differentialFunctionOf(func, epsilon)
-			assert(bounds.size == xZero.size) {
-				"Bounds number (${bounds.size}) doesn't match starting point size (${xZero.size})"
-			}
+        fun minimize(
+            // most important inputs
+            func: (DoubleArray) -> Double,
+            xZero: DoubleArray,
+            bounds: List<Bound> = getUnbounds(xZero.size),
+            // algorithm's parameters
+            maxIterations: Int = 15000,
+            maxCorrections: Int = 10,
+            maxGradientNorm: Double = 1e-5,
+            funcReductionFactor: Double = 1e7,
+            // external parameters
+            verbose: Int = -1,
+            epsilon: Double = 1e-8,
+            callback: ((DoubleArray, Double, DoubleArray) -> Boolean)? = null
+        ): Summary {
+            val diffFunc = differentialFunctionOf(func, epsilon)
+            assert(bounds.size == xZero.size) {
+                "Bounds number (${bounds.size}) doesn't match starting point size (${xZero.size})"
+            }
 
-			val optimizer = LBFGSBWrapper(xZero.size, maxCorrections).apply {
-				setX(xZero)
-				setBounds(bounds)
-				setDebugLevel(verbose)
-				setMaxGradientNorm(maxGradientNorm)
-				setFunctionFactor(funcReductionFactor)
-			}
+            val optimizer = LBFGSBWrapper(xZero.size, maxCorrections).apply {
+                setX(xZero)
+                setBounds(bounds)
+                setDebugLevel(verbose)
+                setMaxGradientNorm(maxGradientNorm)
+                setFunctionFactor(funcReductionFactor)
+            }
 
-			val info = optimizer.minimize(diffFunc, maxIterations, callback)
-			val summary = Summary(optimizer.getX(), optimizer.getY(), optimizer.getGrads(), info)
+            val info = optimizer.minimize(diffFunc, maxIterations, callback)
+            val summary = Summary(optimizer.getX(), optimizer.getY(), optimizer.getGrads(), info)
 
-			optimizer.close()
-			return summary
-		}
+            optimizer.close()
+            return summary
+        }
 
-		private fun differentialFunctionOf(
-			func: (DoubleArray) -> Double, epsilon: Double = 1e-8
-		): (DoubleArray) -> Pair<Double, DoubleArray> {
-			return { x ->
-				val y = func.invoke(x)
-				val grads = gradientsOf(func, x, y, epsilon)
-				Pair(y, grads)
-			}
-		}
+        private fun differentialFunctionOf(
+            func: (DoubleArray) -> Double,
+            epsilon: Double = 1e-8
+        ): (DoubleArray) -> Pair<Double, DoubleArray> {
+            return { x ->
+                val y = func.invoke(x)
+                val grads = gradientsOf(func, x, y, epsilon)
+                Pair(y, grads)
+            }
+        }
 
-		private fun gradientsOf(
-			func: (DoubleArray) -> Double,
-			xZero: DoubleArray,
-			yZero: Double,
-			epsilon: Double
-		): DoubleArray {
-			assert(epsilon > 0)
+        private fun gradientsOf(
+            func: (DoubleArray) -> Double,
+            xZero: DoubleArray,
+            yZero: Double,
+            epsilon: Double
+        ): DoubleArray {
+            assert(epsilon > 0)
 
-			return DoubleArray(xZero.size) {
-				xZero[it] += epsilon
-				val y = func.invoke(xZero)
-				val gradient = (y - yZero) / epsilon
-				xZero[it] -= epsilon
+            return DoubleArray(xZero.size) {
+                xZero[it] += epsilon
+                val y = func.invoke(xZero)
+                val gradient = (y - yZero) / epsilon
+                xZero[it] -= epsilon
 
-				gradient
-			}
-		}
+                gradient
+            }
+        }
 
-		private fun getUnbounds(numVariables: Int): List<Bound> {
-			return (1..numVariables).map { Bound(null, null) }.toList()
-		}
-	}
+        private fun getUnbounds(numVariables: Int): List<Bound> {
+            return (1..numVariables).map { Bound(null, null) }.toList()
+        }
+    }
 }
