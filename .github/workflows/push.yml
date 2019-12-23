@@ -7,9 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: format Kotlin
-      run: |
-        ls -l
-        ls -l /
+      run: printenv | grep kotlinml
   build-fast:
     runs-on: ubuntu-latest
     steps:
