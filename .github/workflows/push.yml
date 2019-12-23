@@ -18,3 +18,4 @@ jobs:
     steps:
     - name: format Kotlin
       run: ./ktlint -F src/**/*.kt
+      working-directory: $PROJECT_DIR
