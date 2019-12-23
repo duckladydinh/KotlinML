@@ -11,7 +11,7 @@ jobs:
       with:
         java-version: 11
     - name: format Kotlin
-      run: cd /home/runner/work/kotlinml/kotlinml/gradlew && ./ktlint -F src/**/*.kt
+      run: cd /home/runner/work/kotlinml/kotlinml && ./ktlint -F src/**/*.kt
     - uses: eskatos/gradle-command-action@v1
       with:
         arguments: clean build -x test
