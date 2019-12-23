@@ -38,10 +38,11 @@ internal class LBFGSBWrapper(private val dimensions: Int, numCorrections: Int) {
         val nbd = data.nbd
         val l = data.l
         val u = data.u
-        for ((i, bound) in bounds.withIndex()) {
-            lbfgsb_wrapper.intArray_setitem(nbd, i, getBoundCode(bound))
-            lbfgsb_wrapper.doubleArray_setitem(l, i, bound.lower ?: Double.NEGATIVE_INFINITY)
-            lbfgsb_wrapper.doubleArray_setitem(u, i, bound.upper ?: Double.POSITIVE_INFINITY)
+
+        for ((index, bound) in bounds.withIndex()) {
+            lbfgsb_wrapper.intArray_setitem(nbd, index, getBoundCode(bound))
+            lbfgsb_wrapper.doubleArray_setitem(l, index, bound.lower ?: Double.NEGATIVE_INFINITY)
+            lbfgsb_wrapper.doubleArray_setitem(u, index, bound.upper ?: Double.POSITIVE_INFINITY)
         }
     }
 
