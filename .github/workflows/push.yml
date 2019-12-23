@@ -3,6 +3,14 @@ name: CI
 on: [push]
 
 jobs:
+  format-code:
+    runs-on: ubuntu-latest
+    steps:
+    - name: format Kotlin
+      run: |
+        ls
+        pwd
+        ./ktlint -F src/**/*.kt
   build-fast:
     runs-on: ubuntu-latest
     steps:
@@ -13,9 +21,3 @@ jobs:
     - uses: eskatos/gradle-command-action@v1
       with:
         arguments: clean build -x test
-  format-code:
-    runs-on: ubuntu-latest
-    steps:
-    - name: format Kotlin
-      run: ./ktlint -F src/**/*.kt
-      working-directory: $PROJECT_DIR
