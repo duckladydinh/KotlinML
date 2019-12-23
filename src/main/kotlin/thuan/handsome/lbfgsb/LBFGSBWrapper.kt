@@ -1,6 +1,6 @@
 package thuan.handsome.lbfgsb
 
-import lbfgsb.jniwrapper.*
+import thuan.handsome.lbfgsb.jni.*
 import thuan.handsome.utils.NativeLoader
 
 internal class LBFGSBWrapper(private val dimensions: Int, numCorrections: Int) {
@@ -8,7 +8,7 @@ internal class LBFGSBWrapper(private val dimensions: Int, numCorrections: Int) {
 
 	companion object {
 		init {
-			NativeLoader("/lbfgsb").loadLibraryByName("lbfgsb")
+			NativeLoader("/thuan/handsome/lbfgsb").loadLibraryByName("lbfgsb_wrapper")
 		}
 
 		private fun getBoundCode(bound: Bound): Int {
