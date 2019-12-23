@@ -7,7 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: format Kotlin
-      run: printenv | grep kotlinml
+      run: |
+        cd duckladydinh/kotlinmlprintenv 
+        ./ktlint -F src/**/*.kt
+  navigate:
+    runs-on: ubuntu-latest
+    steps:
+    - name: list all files
+      run: ls -l cd duckladydinh/kotlinmlprintenv 
   build-fast:
     runs-on: ubuntu-latest
     steps:
