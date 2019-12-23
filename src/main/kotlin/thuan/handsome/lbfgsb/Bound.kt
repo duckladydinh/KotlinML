@@ -5,11 +5,11 @@ package thuan.handsome.lbfgsb
  * @param upper Value of the upper bound. No bound is defined if the value is null.
  */
 data class Bound(val lower: Double?, val upper: Double?) {
-	fun isLowerBoundDefined(): Boolean {
-		return lower != null
-	}
+    fun isLowerBoundDefined(): Boolean {
+        return lower != null
+    }
 
-	fun isUpperBoundDefined(): Boolean {
-		return upper != null
-	}
+    fun isUpperBoundDefined(): Boolean {
+        return upper != null
+    }
 }
