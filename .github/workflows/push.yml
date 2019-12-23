@@ -7,14 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: format Kotlin
-      run: |
-        cd duckladydinh/kotlinml 
-        ./ktlint -F src/**/*.kt
+      run: ls -l ..
   navigate:
     runs-on: ubuntu-latest
     steps:
     - name: list all files
-      run: ls -l cd duckladydinh/kotlinml 
+      run: ls -l 
   build-fast:
     runs-on: ubuntu-latest
     steps:
