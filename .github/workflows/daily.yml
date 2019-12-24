@@ -1,4 +1,4 @@
-name: CI on Daily
+name: CI at Night
 
 on:
   schedule:
