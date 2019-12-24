@@ -19,12 +19,13 @@ class OptimizerTest {
             mapOf(
                 "objective" to "binary",
                 "verbose" to -1,
-                "is_unbalance" to false
+                "is_unbalance" to true
             )
         )
         xSpace.addParam("feature_fraction", 0.0, 1.0)
         xSpace.addParam("bagging_fraction", 0.0, 1.0)
         xSpace.addParam("max_depth", 10.0, 30.0, false)
+        xSpace.addParam("num_leaves", 100.0, 500.0, false)
         xSpace.addParam("min_split_gain", 0.0, 1.0)
         xSpace.addParam("min_child_weight", 1.0, 10.0, false)
 

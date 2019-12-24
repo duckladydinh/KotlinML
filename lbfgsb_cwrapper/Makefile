@@ -41,13 +41,7 @@ init:
 	mkdir -p dist
 	mkdir -p build
 
-dist: init dist/$(LIB_NAME) dist/thuan dist/test_prog
-
-dist/$(LIB_NAME): build/lbfgsb_wrapper.o build/solver.o  build/blas.o build/linpack.o build/timer.o lbfgsb_wrapper.i
-	mkdir -p dist/src/lbfgsb/jniwrapper
-	swig -java -package lbfgsb.jniwrapper -outdir dist/src/lbfgsb/jniwrapper lbfgsb_wrapper.i
-	$(CC) -I $(JAVA_HOME)/include -I $(JNI_ARCH_DIR_AUTO) -fPIC -c lbfgsb_wrapper_wrap.c -o build/lbfgsb_wrapper_wrap.o #JAVA_HOME environment variable has to be set
-	$(CC) $(LDFLAGS) -shared -o dist/$(LIB_NAME) build/lbfgsb_wrapper_wrap.o build/lbfgsb_wrapper.o build/solver.o build/blas.o build/linpack.o build/timer.o -lm $(LIB_DEPENDENCIES)	
+dist: init dist/thuan
 
 dist/thuan: build/lbfgsb_wrapper.o build/solver.o  build/blas.o build/linpack.o build/timer.o lbfgsb_wrapper.i
 	mkdir -p tmp
@@ -59,13 +53,6 @@ dist/thuan: build/lbfgsb_wrapper.o build/solver.o  build/blas.o build/linpack.o 
 	cp tmp/$(LIB_NAME) thuan/handsome/lbfgsb/linux/x86_64
 	jar -cf lbfgsblib_linux.jar thuan
 	rm -rf tmp thuan
-
-
-dist/test_prog: build/test_prog.o build/lbfgsb_wrapper.o build/solver.o build/blas.o build/linpack.o build/timer.o
-	$(CC) -o dist/test_prog build/test_prog.o build/lbfgsb_wrapper.o build/solver.o build/blas.o build/linpack.o build/timer.o -lm $(LIB_DEPENDENCIES)
-
-build/test_prog.o: test_prog.c
-	$(CC) $(CFLAGS) -c test_prog.c -o build/test_prog.o
 
 build/lbfgsb_wrapper.o: lbfgsb_wrapper.c lbfgsb_wrapper.h
 	$(CC) $(CFLAGS) -c lbfgsb_wrapper.c -o build/lbfgsb_wrapper.o

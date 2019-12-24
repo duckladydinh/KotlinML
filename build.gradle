@@ -37,7 +37,7 @@ dependencies {
     implementation "io.github.microutils:kotlin-logging:1.7.7" // logging api
 
     implementation name: "lightgbmlib_linux"
-    implementation name: "lbfgsblib_linux"
+    implementation name: "lbfgsblib_linux" // sudo apt install libgfortran-9-dev for this
 
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
 }
