@@ -4,6 +4,7 @@ import kotlin.math.pow
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Test
+import thuan.handsome.utils.LOGGER
 
 class LBFGSBTest {
     @Test
@@ -20,6 +21,8 @@ class LBFGSBTest {
         assertEquals(76.56, rosen.invoke((0 until 10).map { it * 0.1 }.toDoubleArray()))
 
         val res = LBFGSBOptimizer.minimize(rosen, doubleArrayOf(1.3, 0.7, 0.8, 1.9, 1.2))
+        LOGGER.info { "$res" }
+
         assertTrue(res.x.map { (it - 1).pow(2) }.sum() < 0.001)
         assertTrue(res.y < 0.001)
     }
@@ -38,6 +41,7 @@ class LBFGSBTest {
                 Bound(1.0, 5.0), Bound(-2.0, 3.0), Bound(-5.0, 1.0)
             )
         )
+        LOGGER.info { "$res" }
 
         assertEquals(doubleArrayOf(1.0, 3.0, 1.0).toList(), res.x.toList())
         assertEquals(-8.0, res.y)
