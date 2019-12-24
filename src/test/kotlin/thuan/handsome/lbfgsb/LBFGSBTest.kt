@@ -24,7 +24,7 @@ class LBFGSBTest {
 		assertTrue(res.x.map { (it - 1).pow(2) }.sum() < 0.001)
 		assertTrue(res.y < 0.001)
 
-        LOGGER.info { "$res" }
+        // LOGGER.info { "$res" }
 	}
 
 	@Test
@@ -45,6 +45,6 @@ class LBFGSBTest {
 		assertEquals(doubleArrayOf(1.0, 3.0, 1.0).toList(), res.x.toList())
 		assertEquals(-8.0, res.y)
 
-        LOGGER.info { "$res" }
+        // LOGGER.info { "$res" }
 	}
 }
