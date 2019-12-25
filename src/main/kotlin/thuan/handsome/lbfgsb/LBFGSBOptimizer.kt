@@ -1,5 +1,7 @@
 package thuan.handsome.lbfgsb
 
+import thuan.handsome.utils.Bound
+
 /**
  * High-level wrapper for the L-BFGS-B algorithm
  */

@@ -4,6 +4,7 @@ import kotlin.math.pow
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Test
+import thuan.handsome.utils.Bound
 import thuan.handsome.utils.LOGGER
 
 class LBFGSBTest {
@@ -38,7 +39,9 @@ class LBFGSBTest {
 
         val res = LBFGSBOptimizer.minimize(
             f, doubleArrayOf(1.0, 1.0, 0.0), listOf(
-                Bound(1.0, 5.0), Bound(-2.0, 3.0), Bound(-5.0, 1.0)
+                Bound(1.0, 5.0),
+                Bound(-2.0, 3.0),
+                Bound(-5.0, 1.0)
             )
         )
         LOGGER.info { "$res" }

@@ -43,7 +43,7 @@ init:
 
 dist: init dist/thuan
 
-dist/thuan: build/lbfgsb_wrapper.o build/solver.o  build/blas.o build/linpack.o build/timer.o lbfgsb_wrapper.i
+dist/thuan: build/lbfgsb_wrapper.o build/solver.o build/blas.o build/linpack.o build/timer.o lbfgsb_wrapper.i
 	mkdir -p tmp
 	swig -java -package thuan.handsome.lbfgsb.jni -outdir tmp lbfgsb_wrapper.i
 	$(CC) -I $(JAVA_HOME)/include -I $(JNI_ARCH_DIR_AUTO) -fPIC -c lbfgsb_wrapper_wrap.c -o build/lbfgsb_wrapper_wrap.o #JAVA_HOME environment variable has to be set

@@ -1,4 +1,4 @@
-package thuan.handsome.lbfgsb
+package thuan.handsome.utils
 
 /**
  * @param lower Value of the lower bound. No bound is defined if the value is null.

@@ -1,6 +1,7 @@
 package thuan.handsome.lbfgsb
 
 import thuan.handsome.lbfgsb.jni.*
+import thuan.handsome.utils.Bound
 import thuan.handsome.utils.NativeLoader
 
 internal class LBFGSBWrapper(private val dimensions: Int, numCorrections: Int) {
