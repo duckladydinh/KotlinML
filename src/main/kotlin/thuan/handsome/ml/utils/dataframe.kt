@@ -1,4 +1,4 @@
-package thuan.handsome.utils
+package thuan.handsome.ml.utils
 
 import koma.extensions.set
 import koma.internal.default.generated.matrix.DefaultDoubleMatrix

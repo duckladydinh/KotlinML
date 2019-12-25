@@ -1,4 +1,4 @@
-package thuan.handsome.utils
+package thuan.handsome.ml.utils
 
 fun f1score(predicted: IntArray, target: IntArray): Double {
     assert(predicted.size == target.size) { "F1Score inputs have unequal sizes" }

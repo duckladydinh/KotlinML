@@ -1,7 +1,7 @@
 package thuan.handsome.autoparams.optimizer
 
 import thuan.handsome.autoparams.xspace.XSpace
-import thuan.handsome.utils.LOGGER
+import thuan.handsome.ml.utils.LOGGER
 
 class UniformRandomOptimizer : Optimizer {
     override fun argMaximize(

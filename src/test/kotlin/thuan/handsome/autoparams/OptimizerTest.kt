@@ -5,7 +5,7 @@ import thuan.handsome.autoparams.optimizer.UniformRandomOptimizer
 import thuan.handsome.autoparams.xspace.UniformXSpace
 import thuan.handsome.lightgbm.cv
 import thuan.handsome.lightgbm.train
-import thuan.handsome.utils.*
+import thuan.handsome.ml.utils.*
 
 class OptimizerTest {
     @Test

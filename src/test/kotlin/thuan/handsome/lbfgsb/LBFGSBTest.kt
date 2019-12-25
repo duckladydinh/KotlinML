@@ -4,8 +4,8 @@ import kotlin.math.pow
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Test
-import thuan.handsome.utils.Bound
-import thuan.handsome.utils.LOGGER
+import thuan.handsome.ml.DifferentialFunction
+import thuan.handsome.ml.utils.LOGGER
 
 class LBFGSBTest {
     @Test
@@ -21,7 +21,7 @@ class LBFGSBTest {
         }
         assertEquals(76.56, rosen.invoke((0 until 10).map { it * 0.1 }.toDoubleArray()))
 
-        val res = LBFGSBOptimizer.minimize(rosen, doubleArrayOf(1.3, 0.7, 0.8, 1.9, 1.2))
+        val res = CWrapper.minimize(rosen, doubleArrayOf(1.3, 0.7, 0.8, 1.9, 1.2))
         LOGGER.info { "$res" }
 
         assertTrue(res.x.map { (it - 1).pow(2) }.sum() < 0.001)
@@ -30,15 +30,11 @@ class LBFGSBTest {
 
     @Test
     fun testBoundedFunction() {
-        val f = { params: DoubleArray ->
-            val x = params[0]
-            val y = params[1]
-            val z = params[2]
-            x * x - y * y * z
-        }
-
-        val res = LBFGSBOptimizer.minimize(
-            f, doubleArrayOf(1.0, 1.0, 0.0), listOf(
+        val res = CWrapper.minimize(
+            DifferentialFunction.from {
+                it[0].pow(2) - it[1].pow(2) * it[2]
+            },
+            doubleArrayOf(1.0, 1.0, 0.0), arrayOf(
                 Bound(1.0, 5.0),
                 Bound(-2.0, 3.0),
                 Bound(-5.0, 1.0)
