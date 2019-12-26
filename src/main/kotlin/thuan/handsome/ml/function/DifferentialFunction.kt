@@ -1,14 +1,19 @@
-package thuan.handsome.ml
+package thuan.handsome.ml.function
 
-interface DifferentialFunction {
+class DifferentialFunction(
+    private val func: (DoubleArray) -> DifferentialEvaluation
+) : (DoubleArray) -> DifferentialEvaluation {
     companion object {
         fun from(epsilon: Double = 1e-8, func: (DoubleArray) -> Double): DifferentialFunction {
-            return object : DifferentialFunction {
-                override fun evaluate(x: DoubleArray): DifferentialEvaluation {
-                    val y = func.invoke(x)
-                    val grads = gradientsOf(func, x, y, epsilon)
-                    return DifferentialEvaluation(y, grads)
-                }
+            return DifferentialFunction {
+                val y = func.invoke(it)
+                val grads = gradientsOf(
+                    func,
+                    it,
+                    y,
+                    epsilon
+                )
+                DifferentialEvaluation(y, grads)
             }
         }
 
@@ -31,5 +36,7 @@ interface DifferentialFunction {
         }
     }
 
-    fun evaluate(x: DoubleArray): DifferentialEvaluation
+    override fun invoke(x: DoubleArray): DifferentialEvaluation {
+        return func.invoke(x)
+    }
 }

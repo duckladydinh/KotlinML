@@ -2,10 +2,10 @@ package thuan.handsome.autoparams
 
 import org.junit.Test
 import thuan.handsome.autoparams.optimizer.UniformRandomOptimizer
-import thuan.handsome.autoparams.xspace.UniformXSpace
 import thuan.handsome.lightgbm.cv
 import thuan.handsome.lightgbm.train
 import thuan.handsome.ml.utils.*
+import thuan.handsome.ml.xspace.UniformXSpace
 
 class OptimizerTest {
     @Test

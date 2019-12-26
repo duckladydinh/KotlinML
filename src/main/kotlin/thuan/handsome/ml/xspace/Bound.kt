@@ -1,4 +1,4 @@
-package thuan.handsome.lbfgsb
+package thuan.handsome.ml.xspace
 
 data class Bound(val lower: Double = Double.NEGATIVE_INFINITY, val upper: Double = Double.POSITIVE_INFINITY) {
     fun isLowerBounded(): Boolean {

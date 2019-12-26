@@ -1,8 +1,9 @@
 package thuan.handsome.lbfgsb
 
 import thuan.handsome.lbfgsb.jni.*
-import thuan.handsome.ml.DifferentialFunction
+import thuan.handsome.ml.function.DifferentialFunction
 import thuan.handsome.ml.utils.NativeLoader
+import thuan.handsome.ml.xspace.Bound
 
 class CWrapper(private val dimensions: Int, numCorrections: Int) {
     private val data: lbfgsb = lbfgsb_wrapper.lbfgsb_create(dimensions, numCorrections)
@@ -49,34 +50,6 @@ class CWrapper(private val dimensions: Int, numCorrections: Int) {
          *
          *  @param callback (x, y, grads) - a method to call after each iteration
          */
-        fun minimize(
-            // most important inputs
-            func: (DoubleArray) -> Double,
-            xZero: DoubleArray,
-            bounds: Array<Bound> = Bound().times(xZero.size),
-            // algorithm's parameters
-            maxIterations: Int = 15000,
-            maxCorrections: Int = 10,
-            maxGradientNorm: Double = 1e-5,
-            funcReductionFactor: Double = 1e7,
-            // external parameters
-            verbose: Int = -1,
-            epsilon: Double = 1e-8,
-            callback: ((DoubleArray, Double, DoubleArray) -> Boolean)? = null
-        ): Summary {
-            return minimize(
-                DifferentialFunction.from(epsilon, func),
-                xZero,
-                bounds,
-                maxIterations,
-                maxCorrections,
-                maxGradientNorm,
-                funcReductionFactor,
-                verbose,
-                callback
-            )
-        }
-
         fun minimize(
             // most important inputs
             func: DifferentialFunction,
@@ -149,7 +122,7 @@ class CWrapper(private val dimensions: Int, numCorrections: Int) {
                 lbfgsb_task_type.LBFGSB_FG -> {
                     numEvals += 1
                     val x = getX()
-                    val (y, grads) = func.evaluate(x)
+                    val (y, grads) = func.invoke(x)
                     setY(y)
                     setGrads(grads)
                 }

@@ -1,4 +1,4 @@
-package thuan.handsome.ml
+package thuan.handsome.ml.function
 
 data class DifferentialEvaluation(val y: Double, val grads: DoubleArray) {
     override fun equals(other: Any?): Boolean {

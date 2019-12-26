@@ -4,22 +4,23 @@ import kotlin.math.pow
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Test
-import thuan.handsome.ml.DifferentialFunction
+import thuan.handsome.ml.function.DifferentialFunction
 import thuan.handsome.ml.utils.LOGGER
+import thuan.handsome.ml.xspace.Bound
 
 class LBFGSBTest {
     @Test
     fun testUnboundedRosen() {
-        val rosen = { params: DoubleArray ->
-            val n = params.size
+        val rosen = DifferentialFunction.from {
+            val n = it.size
             var res = 0.0
             for (i in 1 until n) {
-                res += 100.0 * (params[i] - params[i - 1].pow(2)).pow(2) + (1 - params[i - 1]).pow(2)
+                res += 100.0 * (it[i] - it[i - 1].pow(2)).pow(2) + (1 - it[i - 1]).pow(2)
             }
-
             res
         }
-        assertEquals(76.56, rosen.invoke((0 until 10).map { it * 0.1 }.toDoubleArray()))
+        val (y, _) = rosen.invoke((0 until 10).map { it * 0.1 }.toDoubleArray())
+        assertEquals(76.56, y)
 
         val res = CWrapper.minimize(rosen, doubleArrayOf(1.3, 0.7, 0.8, 1.9, 1.2))
         LOGGER.info { "$res" }

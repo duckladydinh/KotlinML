@@ -1,21 +1,24 @@
 package thuan.handsome.gp.kernel
 
-import koma.extensions.*
+import koma.extensions.get
+import koma.extensions.set
 import koma.matrix.Matrix
 import koma.ndarray.NDArray
 import koma.pow
 import koma.zeros
 import kotlin.math.exp
+import kotlin.math.ln
+import thuan.handsome.ml.xspace.*
 
-class RBFKernel(
-    override val dimension: Int,
-    override var lowerBound: Double = 1e-5,
-    override var upperBound: Double = 1e5
-) : Kernel {
-    private fun getLengthScale(theta: DoubleArray): DoubleArray {
-        return DoubleArray(theta.size) {
-            exp(theta[it])
-        }
+class RBFKernel private constructor(private val bounds: Array<Bound>) : Kernel {
+    constructor(dimension: Int) : this(Bound(1e-5, 1e5).times(dimension))
+
+    override fun getCovarianceMatrixTrace(
+        dataX: Matrix<Double>,
+        dataY: Matrix<Double>,
+        theta: DoubleArray
+    ): DoubleArray {
+        return DoubleArray(dataX.numRows()) { 1.0 }
     }
 
     /**
@@ -49,6 +52,14 @@ class RBFKernel(
 	 */
     override fun getCovarianceMatrix(data: Matrix<Double>, theta: DoubleArray): Matrix<Double> {
         return getCovarianceMatrix(data, data, theta)
+    }
+
+    override fun getThetaBounds(): XSpace {
+        val xSpace = UniformXSpace()
+        for ((i, bound) in bounds.withIndex()) {
+            xSpace.addParam("P$i", ln(bound.lower) * 1.01, ln(bound.upper) * 0.99)
+        }
+        return xSpace
     }
 
     /**
@@ -89,5 +100,12 @@ class RBFKernel(
     private fun distance(x: Matrix<Double>, y: Matrix<Double>, lengthScale: DoubleArray): Double {
         val d = x - y
         return exp(-0.5 * (0 until d.numRows()).map { (d[it] / lengthScale[it]).pow(2) }.sum())
+    }
+
+    private fun getLengthScale(theta: DoubleArray): DoubleArray {
+        return DoubleArray(theta.size) {
+            val x = exp(theta[it])
+            x
+        }
     }
 }
