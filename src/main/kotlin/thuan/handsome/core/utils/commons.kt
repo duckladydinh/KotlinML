@@ -1,4 +1,4 @@
-package thuan.handsome.ml.utils
+package thuan.handsome.core.utils
 
 import mu.KotlinLogging
 

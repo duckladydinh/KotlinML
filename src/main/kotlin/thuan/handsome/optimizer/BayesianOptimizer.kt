@@ -1,6 +1,6 @@
-package thuan.handsome.autoparams.optimizer
+package thuan.handsome.optimizer
 
-import thuan.handsome.ml.xspace.XSpace
+import thuan.handsome.core.xspace.XSpace
 
 class BayesianOptimizer : Optimizer {
     override fun argMaximize(

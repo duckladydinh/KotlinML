@@ -2,7 +2,7 @@ package thuan.handsome.lightgbm.model
 
 import com.microsoft.ml.lightgbm.*
 import koma.matrix.Matrix
-import thuan.handsome.ml.utils.NativeLoader
+import thuan.handsome.core.utils.NativeLoader
 
 typealias VoidDoublePointer = SWIGTYPE_p_p_void
 typealias LongPointer = SWIGTYPE_p_long_long

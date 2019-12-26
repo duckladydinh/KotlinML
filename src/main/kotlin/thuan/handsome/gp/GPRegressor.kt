@@ -6,12 +6,12 @@ import koma.extensions.map
 import koma.matrix.Matrix
 import kotlin.math.PI
 import kotlin.math.ln
+import thuan.handsome.core.function.DifferentialEvaluation
+import thuan.handsome.core.function.DifferentialFunction
+import thuan.handsome.core.xspace.XSpace
 import thuan.handsome.gp.kernel.Kernel
 import thuan.handsome.gp.kernel.RBFKernel
 import thuan.handsome.lbfgsb.CWrapper
-import thuan.handsome.ml.function.DifferentialEvaluation
-import thuan.handsome.ml.function.DifferentialFunction
-import thuan.handsome.ml.xspace.XSpace
 
 class GPRegressor internal constructor(
     private val data: Matrix<Double>, // list of horizontal vectors

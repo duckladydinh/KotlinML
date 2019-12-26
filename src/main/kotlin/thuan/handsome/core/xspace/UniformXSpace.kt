@@ -1,4 +1,4 @@
-package thuan.handsome.ml.xspace
+package thuan.handsome.core.xspace
 
 import kotlin.math.ceil
 import kotlin.random.Random

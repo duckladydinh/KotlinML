@@ -1,4 +1,4 @@
-package thuan.handsome.ml.xspace
+package thuan.handsome.core.xspace
 
 interface XSpace {
     fun addParam(name: String, lower: Double, upper: Double, isDouble: Boolean = true)

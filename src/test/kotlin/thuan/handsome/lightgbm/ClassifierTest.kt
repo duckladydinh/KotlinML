@@ -1,7 +1,7 @@
 package thuan.handsome.lightgbm
 
 import org.junit.Test
-import thuan.handsome.ml.utils.*
+import thuan.handsome.core.utils.*
 
 class ClassifierTest {
     @Test

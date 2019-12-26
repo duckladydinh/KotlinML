@@ -1,4 +1,4 @@
-package thuan.handsome.ml.function
+package thuan.handsome.core.function
 
 class DifferentialFunction(
     private val func: (DoubleArray) -> DifferentialEvaluation

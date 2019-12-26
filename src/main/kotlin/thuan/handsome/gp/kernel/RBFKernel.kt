@@ -8,7 +8,7 @@ import koma.pow
 import koma.zeros
 import kotlin.math.exp
 import kotlin.math.ln
-import thuan.handsome.ml.xspace.*
+import thuan.handsome.core.xspace.*
 
 class RBFKernel private constructor(private val bounds: Array<Bound>) : Kernel {
     constructor(dimension: Int) : this(Bound(1e-5, 1e5).times(dimension))

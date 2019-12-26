@@ -1,9 +1,9 @@
 package thuan.handsome.lightgbm
 
 import koma.matrix.Matrix
+import thuan.handsome.core.utils.sliceByRows
 import thuan.handsome.lightgbm.model.Booster
 import thuan.handsome.lightgbm.model.Dataset
-import thuan.handsome.ml.utils.sliceByRows
 
 fun train(params: Map<String, Any>, data: Matrix<Double>, label: IntArray, rounds: Int): Booster {
     val dataset = Dataset.from(data, label)

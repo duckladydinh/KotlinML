@@ -1,9 +1,9 @@
 package thuan.handsome.lbfgsb
 
+import thuan.handsome.core.function.DifferentialFunction
+import thuan.handsome.core.utils.NativeLoader
+import thuan.handsome.core.xspace.Bound
 import thuan.handsome.lbfgsb.jni.*
-import thuan.handsome.ml.function.DifferentialFunction
-import thuan.handsome.ml.utils.NativeLoader
-import thuan.handsome.ml.xspace.Bound
 
 class CWrapper(private val dimensions: Int, numCorrections: Int) {
     private val data: lbfgsb = lbfgsb_wrapper.lbfgsb_create(dimensions, numCorrections)

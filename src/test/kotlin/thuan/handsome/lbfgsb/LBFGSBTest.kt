@@ -4,9 +4,9 @@ import kotlin.math.pow
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Test
-import thuan.handsome.ml.function.DifferentialFunction
-import thuan.handsome.ml.utils.LOGGER
-import thuan.handsome.ml.xspace.Bound
+import thuan.handsome.core.function.DifferentialFunction
+import thuan.handsome.core.utils.LOGGER
+import thuan.handsome.core.xspace.Bound
 
 class LBFGSBTest {
     @Test
