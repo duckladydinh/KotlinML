@@ -3,8 +3,7 @@ package thuan.handsome.optimizer
 import org.junit.Test
 import thuan.handsome.core.utils.*
 import thuan.handsome.core.xspace.UniformXSpace
-import thuan.handsome.lightgbm.cv
-import thuan.handsome.lightgbm.train
+import thuan.handsome.lightgbm.Booster
 
 class OptimizerTest {
     @Test
@@ -32,14 +31,14 @@ class OptimizerTest {
 
         val (params, _) = optimizer.argMaximize(
             fun(params: Map<String, Any>): Double {
-                val scores = cv(params, trainData, trainLabel, 30, 5, ::f1score)
+                val scores = Booster.cv(params, trainData, trainLabel, 30, 5, ::f1score)
                 return scores.min()!!
             },
             xSpace,
             30
         )
 
-        val booster = train(params, trainData, trainLabel, 30)
+        val booster = Booster.fit(params, trainData, trainLabel, 30)
         val trainedPreds = booster.predict(trainData)
 
         LOGGER.info {

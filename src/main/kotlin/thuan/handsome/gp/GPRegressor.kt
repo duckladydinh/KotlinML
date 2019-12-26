@@ -20,7 +20,7 @@ class GPRegressor internal constructor(
     private val noise: Double = 1e-10,
     normalizeY: Boolean = false
 ) {
-    var theta = DoubleArray(data.numCols())
+    var bestTheta = DoubleArray(data.numCols())
 
     private lateinit var covMatCholesky: Matrix<Double>
     private lateinit var covMatInv: Matrix<Double>
@@ -39,13 +39,13 @@ class GPRegressor internal constructor(
             val gp = GPRegressor(data, y)
 
             var bestLogLikelihood = Double.NEGATIVE_INFINITY
-            var bestTheta = gp.theta
+            var bestTheta = gp.bestTheta
             val func = DifferentialFunction { theta ->
                 val (res, grads) = gp.evaluate(theta, true)
                 DifferentialEvaluation(-res, grads.map { -it }.toDoubleArray())
             }
 
-            val result = CWrapper.minimize(func, gp.theta, bounds = gp.xSpace.getBounds())
+            val result = CWrapper.minimize(func, gp.bestTheta, bounds = gp.xSpace.getBounds())
             if (bestLogLikelihood < -result.y) {
                 bestLogLikelihood = -result.y
                 bestTheta = result.x
@@ -60,28 +60,34 @@ class GPRegressor internal constructor(
                 }
             }
 
+            // IMPORTANT: this line of code updates final theta, we
+            // need a full gp for prediction so cannot only return
+            // this. Hence we keep this as an internal state
+            gp.bestTheta = bestTheta
+            // we will not updated theta inside 'evaluate' to ensure
+            // that bestTheta is really the best theta ever
             gp.evaluate(theta = bestTheta, computeGradient = true)
             return gp
         }
     }
 
     /**
-     * @param x a point which is the determining parameters of some function
-     *
-     * @return a mean and variance of x's goodness
-     */
-    fun predict(x: DoubleArray): Prediction {
+	 * @param x a point which is the determining parameters of some function
+	 *
+	 * @return a mean and variance of x's goodness
+	 */
+    fun predict(x: DoubleArray): GPPrediction {
         require(x.size == xSpace.getDim())
 
         val xMat = create(x)
-        var predYVar = kernel.getCovarianceMatrixTrace(xMat, xMat, this.theta)[0]
+        var predYVar = kernel.getCovarianceMatrixTrace(xMat, xMat, this.bestTheta)[0]
 
         if (!this.isPosterior) {
-            return Prediction(0.0, predYVar)
+            return GPPrediction(0.0, predYVar)
         }
 
         // horizontal vector
-        val predK = kernel.getCovarianceMatrix(create(x), this.data, this.theta)
+        val predK = kernel.getCovarianceMatrix(create(x), this.data, this.bestTheta)
         // definitely a double
         val predYMean = this.yMean + dot(predK, this.alpha)
         // horizontal vector predK * K
@@ -89,7 +95,7 @@ class GPRegressor internal constructor(
         predYVar -= dot(predKK, predK)
         predYVar = max(0.0, predYVar)
 
-        return Prediction(predYMean, predYVar)
+        return GPPrediction(predYMean, predYVar)
     }
 
     /**
@@ -102,7 +108,6 @@ class GPRegressor internal constructor(
     fun evaluate(theta: DoubleArray, computeGradient: Boolean = false): DifferentialEvaluation {
         val (n, m) = this.data.shape()
         require(m == xSpace.getDim())
-        this.theta = theta
 
         this.likelihood = Double.NEGATIVE_INFINITY
         repeat(m) {
@@ -118,7 +123,7 @@ class GPRegressor internal constructor(
             )
         }
 
-        this.covMat = this.kernel.getCovarianceMatrix(this.data, this.theta) + eye(n) * noise
+        this.covMat = this.kernel.getCovarianceMatrix(this.data, theta) + eye(n) * noise
         this.covMatInv = this.covMat.inv()
 
         this.alpha = covMatInv * this.y
@@ -130,7 +135,7 @@ class GPRegressor internal constructor(
         this.likelihood -= 0.5 * n * ln(2 * PI)
 
         if (computeGradient) {
-            val covMatGrads = this.kernel.getCovarianceMatrixGradient(this.data, this.covMat, this.theta)
+            val covMatGrads = this.kernel.getCovarianceMatrixGradient(this.data, this.covMat, theta)
             val tmp = (alpha * alpha.T) - this.covMatInv * eye(n)
 
             for (i in 0 until n) {

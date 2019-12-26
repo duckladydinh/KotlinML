@@ -1,8 +1,8 @@
-package thuan.handsome.lightgbm.model
+package thuan.handsome.lightgbm
 
 import koma.matrix.Matrix
 
-class Dataset : CObject() {
+class Dataset private constructor() : CObject() {
     companion object {
         @JvmStatic
         fun from(data: Matrix<Double>, label: IntArray): Dataset {
@@ -22,21 +22,21 @@ class Dataset : CObject() {
 
     private fun setLabel(label: FloatArray) {
         val nativePointer = label.toNativeFloatArray()
-        API.LGBM_DatasetSetField(
+        C_API.LGBM_DatasetSetField(
             handle.getVoidSinglePointer(),
             "label",
             nativePointer.toVoidPointer(),
             label.size,
-            API.C_API_DTYPE_FLOAT32
+            C_API.C_API_DTYPE_FLOAT32
         )
-        API.delete_floatArray(nativePointer)
+        C_API.delete_floatArray(nativePointer)
     }
 
     private fun setData(data: Matrix<Double>) {
         val nativePointer = data.toNativeDoubleArray()
-        API.LGBM_DatasetCreateFromMat(
+        C_API.LGBM_DatasetCreateFromMat(
             nativePointer.toVoidPointer(),
-            API.C_API_DTYPE_FLOAT64,
+            C_API.C_API_DTYPE_FLOAT64,
             data.numRows(),
             data.numCols(),
             1,
@@ -44,10 +44,10 @@ class Dataset : CObject() {
             null,
             this.handle
         )
-        API.delete_doubleArray(nativePointer)
+        C_API.delete_doubleArray(nativePointer)
     }
 
     override fun close() {
-        API.LGBM_DatasetFree(this.handle.getVoidSinglePointer())
+        C_API.LGBM_DatasetFree(this.handle.getVoidSinglePointer())
     }
 }

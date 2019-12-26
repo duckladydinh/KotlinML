@@ -28,11 +28,13 @@ class GPRegressorTest {
         val y = create(doubleArrayOf(0.84147098, -4.79462137, 4.59890619, -1.67649299, -3.02720998, 1.81859485)).T
         val gp = GPRegressor.fit(data, y, numOptimizerRestarts = 2)
 
-        val (likelihood, grads) = gp.evaluate(gp.theta, computeGradient = true)
+        val (likelihood, grads) = gp.evaluate(gp.bestTheta, computeGradient = true)
         assertTrue(abs(listOf(3.275441966932302E-6, 6.448424168213618E-7).sum() - grads.sum()) <= EPS)
         assertTrue(abs(-32.04890772304928 - likelihood) < EPS)
 
-        gp.evaluate(doubleArrayOf(-0.10697528, -0.10697528), computeGradient = true)
+        val theta = doubleArrayOf(-0.10697528, -0.10697528)
+        gp.bestTheta = theta
+        gp.evaluate(theta, computeGradient = true)
         val (mean, variance) = gp.predict(doubleArrayOf(2.5, 3.5))
         assertTrue(abs(0.909870822511425 - variance) < EPS)
         assertTrue(abs(-0.4503533628761439 - mean) < EPS)

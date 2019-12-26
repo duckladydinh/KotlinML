@@ -26,12 +26,12 @@ class ClassifierTest {
         LOGGER.info { "IO Time: ${System.currentTimeMillis() - start}" }
         start = System.currentTimeMillis()
 
-        val scores = cv(params, trainData, trainLabel, 100, 5, ::f1score)
+        val scores = Booster.cv(params, trainData, trainLabel, 100, 5, ::f1score)
         LOGGER.info { "CV = ${scores.joinToString(" ")}" }
         LOGGER.info { "CV Time: ${System.currentTimeMillis() - start}" }
         start = System.currentTimeMillis()
 
-        val booster = train(params, trainData, trainLabel, 100)
+        val booster = Booster.fit(params, trainData, trainLabel, 100)
         val trainedPreds = booster.predict(trainData)
         LOGGER.info {
             "Train F1 = ${f1score(
