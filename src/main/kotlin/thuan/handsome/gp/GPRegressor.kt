@@ -22,14 +22,17 @@ class GPRegressor internal constructor(
 ) {
     var theta = DoubleArray(data.numCols())
 
+    private lateinit var covMatCholesky: Matrix<Double>
     private lateinit var covMatInv: Matrix<Double>
     private lateinit var covMat: Matrix<Double>
+    // alpha is a vertical vector where covMat * alpha = y
+    private lateinit var alpha: Matrix<Double>
 
     private var likelihoodGrads = DoubleArray(data.numCols())
+    private var yMean = if (normalizeY) y.mean() else 0.0
     private var xSpace: XSpace = kernel.getThetaBounds()
+    private var isPosterior = false
     private var likelihood = 0.0
-    private var variance = 0.0
-    private var mean = if (normalizeY) y.mean() else 0.0
 
     companion object {
         fun fit(data: Matrix<Double>, y: Matrix<Double>, numOptimizerRestarts: Int = 0): GPRegressor {
@@ -38,8 +41,8 @@ class GPRegressor internal constructor(
             var bestLogLikelihood = Double.NEGATIVE_INFINITY
             var bestTheta = gp.theta
             val func = DifferentialFunction { theta ->
-                val (y, grads) = gp.evaluate(theta, true)
-                DifferentialEvaluation(-y, grads.map { -it }.toDoubleArray())
+                val (res, grads) = gp.evaluate(theta, true)
+                DifferentialEvaluation(-res, grads.map { -it }.toDoubleArray())
             }
 
             val result = CWrapper.minimize(func, gp.theta, bounds = gp.xSpace.getBounds())
@@ -50,32 +53,43 @@ class GPRegressor internal constructor(
 
             repeat(numOptimizerRestarts) {
                 val thetaZero = gp.xSpace.sample().values.map { (it as Number).toDouble() }.toDoubleArray()
-                val result = CWrapper.minimize(func, thetaZero, bounds = gp.xSpace.getBounds())
-                if (bestLogLikelihood < -result.y) {
-                    bestLogLikelihood = -result.y
-                    bestTheta = result.x
+                val res = CWrapper.minimize(func, thetaZero, bounds = gp.xSpace.getBounds())
+                if (bestLogLikelihood < -res.y) {
+                    bestLogLikelihood = -res.y
+                    bestTheta = res.x
                 }
             }
 
-            gp.theta = bestTheta
+            gp.evaluate(theta = bestTheta, computeGradient = true)
             return gp
         }
     }
 
-    fun predict(x: DoubleArray): Map<String, Double> {
+    /**
+     * @param x a point which is the determining parameters of some function
+     *
+     * @return a mean and variance of x's goodness
+     */
+    fun predict(x: DoubleArray): Prediction {
         require(x.size == xSpace.getDim())
 
-        val predCovMat = kernel.getCovarianceMatrix(create(x), this.data, this.theta)
+        val xMat = create(x)
+        var predYVar = kernel.getCovarianceMatrixTrace(xMat, xMat, this.theta)[0]
 
-        val predMean = this.mean + dot(covMat.T * this.covMatInv, this.y - this.mean)
+        if (!this.isPosterior) {
+            return Prediction(0.0, predYVar)
+        }
 
-        val tmp = this.covMatInv * predCovMat
-        val predVariance = max(
-            0.0,
-            this.variance * (1 - dot(predCovMat.T, tmp) + (1 - tmp.elementSum()).pow(2) / this.covMatInv.elementSum())
-        )
+        // horizontal vector
+        val predK = kernel.getCovarianceMatrix(create(x), this.data, this.theta)
+        // definitely a double
+        val predYMean = this.yMean + dot(predK, this.alpha)
+        // horizontal vector predK * K
+        val predKK = predK * this.covMatInv
+        predYVar -= dot(predKK, predK)
+        predYVar = max(0.0, predYVar)
 
-        return mapOf("mean" to predMean, "std" to sqrt(predVariance))
+        return Prediction(predYMean, predYVar)
     }
 
     /**
@@ -107,11 +121,11 @@ class GPRegressor internal constructor(
         this.covMat = this.kernel.getCovarianceMatrix(this.data, this.theta) + eye(n) * noise
         this.covMatInv = this.covMat.inv()
 
-        val alpha = covMatInv * this.y
-        val cholesky = covMat.chol()
+        this.alpha = covMatInv * this.y
+        this.covMatCholesky = covMat.chol()
         this.likelihood = 0.0
 
-        this.likelihood -= cholesky.diag().map { ln(it) }.elementSum()
+        this.likelihood -= covMatCholesky.diag().map { ln(it) }.elementSum()
         this.likelihood -= 0.5 * dot(this.y, alpha)
         this.likelihood -= 0.5 * n * ln(2 * PI)
 
@@ -127,6 +141,8 @@ class GPRegressor internal constructor(
                 }
             }
         }
+
+        this.isPosterior = true
 
         return DifferentialEvaluation(
             this.likelihood,

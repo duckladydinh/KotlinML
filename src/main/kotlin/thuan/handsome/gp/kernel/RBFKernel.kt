@@ -34,9 +34,12 @@ class RBFKernel private constructor(private val bounds: Array<Bound>) : Kernel {
         val lengthScale = getLengthScale(theta)
 
         for (i in 0 until n) {
-            for (j in i + 1 until m) {
+            val start = if (n == m) i + 1 else 0
+            for (j in start until m) {
                 covMat[i, j] = distance(dataX.getRow(i).transpose(), dataY.getRow(j).transpose(), lengthScale)
-                covMat[j, i] = covMat[i, j]
+                if (n == m) {
+                    covMat[j, i] = covMat[i, j]
+                }
             }
             if (n == m) {
                 covMat[i, i] = 1
