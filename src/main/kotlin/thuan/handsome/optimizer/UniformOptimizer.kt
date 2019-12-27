@@ -3,7 +3,7 @@ package thuan.handsome.optimizer
 import thuan.handsome.core.utils.LOGGER
 import thuan.handsome.core.xspace.XSpace
 
-class UniformRandomOptimizer : Optimizer {
+class UniformOptimizer : Optimizer {
     override fun argmax(
         func: (Map<String, Any>) -> Double,
         xSpace: XSpace,
@@ -13,7 +13,7 @@ class UniformRandomOptimizer : Optimizer {
         var bestY = Double.NEGATIVE_INFINITY
 
         for (iter in 1..maxiter) {
-            val x = xSpace.sampleWithConstants()
+            val x = xSpace.decorate(xSpace.sample())
             val y = func.invoke(x)
             if (bestY < y) {
                 bestY = y

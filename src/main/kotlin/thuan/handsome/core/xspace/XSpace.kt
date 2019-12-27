@@ -5,13 +5,13 @@ interface XSpace {
 
     fun addConstantParams(params: Map<String, Any>)
 
+    fun decorate(x: DoubleArray): Map<String, Any>
+
     fun validate(index: Int, value: Any): Boolean
 
-    fun sampleWithConstants(): Map<String, Any>
-
-    fun sample(): Map<String, Double>
-
     fun getBounds(): Array<Bound>
+
+    fun sample(): DoubleArray
 
     fun getDim(): Int
 }

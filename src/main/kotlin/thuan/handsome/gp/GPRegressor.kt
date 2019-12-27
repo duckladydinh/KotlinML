@@ -8,7 +8,6 @@ import kotlin.math.PI
 import kotlin.math.ln
 import thuan.handsome.core.function.DifferentialEvaluation
 import thuan.handsome.core.function.DifferentialFunction
-import thuan.handsome.core.utils.toUncheckedDoubleArray
 import thuan.handsome.core.xspace.XSpace
 import thuan.handsome.gp.kernel.Kernel
 import thuan.handsome.gp.kernel.RBFKernel
@@ -46,7 +45,7 @@ class GPRegressor internal constructor(
             var bestTheta = gp.bestTheta
 
             for (iter in 0..numOptimizerRestarts) {
-                val thetaZero = if (iter == 0) gp.bestTheta else gp.xSpace.sample().values.toUncheckedDoubleArray()
+                val thetaZero = if (iter == 0) gp.bestTheta else gp.xSpace.sample()
                 val res = NumericOptimizer.maximize(func, thetaZero, bounds = gp.xSpace.getBounds())
                 if (bestLogLikelihood < res.y) {
                     bestLogLikelihood = res.y
