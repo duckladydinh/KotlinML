@@ -3,6 +3,7 @@ package thuan.handsome.optimizer
 import org.junit.Test
 import thuan.handsome.core.utils.*
 import thuan.handsome.core.xspace.UniformXSpace
+import thuan.handsome.core.xspace.XType
 import thuan.handsome.lightgbm.Booster
 
 class OptimizerTest {
@@ -22,14 +23,14 @@ class OptimizerTest {
         )
         xSpace.addParam("feature_fraction", 0.0, 1.0)
         xSpace.addParam("bagging_fraction", 0.0, 1.0)
-        xSpace.addParam("max_depth", 10.0, 30.0, false)
-        xSpace.addParam("num_leaves", 100.0, 500.0, false)
+        xSpace.addParam("max_depth", 10.0, 30.0, XType.INT)
+        xSpace.addParam("num_leaves", 100.0, 500.0, XType.INT)
         xSpace.addParam("min_split_gain", 0.0, 1.0)
-        xSpace.addParam("min_child_weight", 1.0, 10.0, false)
+        xSpace.addParam("min_child_weight", 1.0, 10.0, XType.INT)
 
         val optimizer = UniformRandomOptimizer()
 
-        val (params, _) = optimizer.argMaximize(
+        val (params, _) = optimizer.argmax(
             fun(params: Map<String, Any>): Double {
                 val scores = Booster.cv(params, trainData, trainLabel, 30, 5, ::f1score)
                 return scores.min()!!

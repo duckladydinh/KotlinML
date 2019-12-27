@@ -8,10 +8,11 @@ import kotlin.math.PI
 import kotlin.math.ln
 import thuan.handsome.core.function.DifferentialEvaluation
 import thuan.handsome.core.function.DifferentialFunction
+import thuan.handsome.core.utils.toUncheckedDoubleArray
 import thuan.handsome.core.xspace.XSpace
 import thuan.handsome.gp.kernel.Kernel
 import thuan.handsome.gp.kernel.RBFKernel
-import thuan.handsome.lbfgsb.CWrapper
+import thuan.handsome.optimizer.numeric.NumericOptimizer
 
 class GPRegressor internal constructor(
     private val data: Matrix<Double>, // list of horizontal vectors
@@ -37,25 +38,18 @@ class GPRegressor internal constructor(
     companion object {
         fun fit(data: Matrix<Double>, y: Matrix<Double>, numOptimizerRestarts: Int = 0): GPRegressor {
             val gp = GPRegressor(data, y)
+            val func = DifferentialFunction {
+                gp.evaluate(it, true)
+            }
 
             var bestLogLikelihood = Double.NEGATIVE_INFINITY
             var bestTheta = gp.bestTheta
-            val func = DifferentialFunction { theta ->
-                val (res, grads) = gp.evaluate(theta, true)
-                DifferentialEvaluation(-res, grads.map { -it }.toDoubleArray())
-            }
 
-            val result = CWrapper.minimize(func, gp.bestTheta, bounds = gp.xSpace.getBounds())
-            if (bestLogLikelihood < -result.y) {
-                bestLogLikelihood = -result.y
-                bestTheta = result.x
-            }
-
-            repeat(numOptimizerRestarts) {
-                val thetaZero = gp.xSpace.sample().values.map { (it as Number).toDouble() }.toDoubleArray()
-                val res = CWrapper.minimize(func, thetaZero, bounds = gp.xSpace.getBounds())
-                if (bestLogLikelihood < -res.y) {
-                    bestLogLikelihood = -res.y
+            for (iter in 0..numOptimizerRestarts) {
+                val thetaZero = if (iter == 0) gp.bestTheta else gp.xSpace.sample().values.toUncheckedDoubleArray()
+                val res = NumericOptimizer.maximize(func, thetaZero, bounds = gp.xSpace.getBounds())
+                if (bestLogLikelihood < res.y) {
+                    bestLogLikelihood = res.y
                     bestTheta = res.x
                 }
             }

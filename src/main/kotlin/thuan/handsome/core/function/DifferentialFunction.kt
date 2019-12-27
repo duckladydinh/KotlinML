@@ -39,4 +39,11 @@ class DifferentialFunction(
     override fun invoke(x: DoubleArray): DifferentialEvaluation {
         return func.invoke(x)
     }
+
+    fun negate(): DifferentialFunction {
+        return DifferentialFunction { x ->
+            val (y, grads) = this.invoke(x)
+            DifferentialEvaluation(-y, grads.map { -it }.toDoubleArray())
+        }
+    }
 }

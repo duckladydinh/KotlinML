@@ -22,7 +22,7 @@ class LBFGSBTest {
         val (y, _) = rosen.invoke((0 until 10).map { it * 0.1 }.toDoubleArray())
         assertEquals(76.56, y)
 
-        val res = CWrapper.minimize(rosen, doubleArrayOf(1.3, 0.7, 0.8, 1.9, 1.2))
+        val res = LBFGSBWrapper.minimize(rosen, doubleArrayOf(1.3, 0.7, 0.8, 1.9, 1.2))
         LOGGER.info { "$res" }
 
         assertTrue(res.x.map { (it - 1).pow(2) }.sum() < 0.001)
@@ -31,7 +31,7 @@ class LBFGSBTest {
 
     @Test
     fun testBoundedFunction() {
-        val res = CWrapper.minimize(
+        val res = LBFGSBWrapper.minimize(
             DifferentialFunction.from {
                 it[0].pow(2) - it[1].pow(2) * it[2]
             },

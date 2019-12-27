@@ -1,17 +1,17 @@
 package thuan.handsome.core.xspace
 
-import kotlin.math.ceil
-import kotlin.random.Random
+import thuan.handsome.core.utils.toUncheckedDouble
+import thuan.handsome.core.utils.toUncheckedInt
 
 class UniformXSpace : XSpace {
     private val constantParams = mutableMapOf<String, Any>()
-    private val paramType = mutableListOf<XType>()
+    private val paramTypes = mutableListOf<XType>()
     private val bounds = mutableListOf<Bound>()
     private val names = mutableListOf<String>()
 
-    override fun addParam(name: String, lower: Double, upper: Double, isDouble: Boolean) {
+    override fun addParam(name: String, lower: Double, upper: Double, xType: XType) {
         bounds.add(Bound(lower, upper))
-        paramType.add(if (isDouble) XType.DOUBLE else XType.INT)
+        paramTypes.add(xType)
         names.add(name)
     }
 
@@ -19,27 +19,24 @@ class UniformXSpace : XSpace {
         constantParams.putAll(params)
     }
 
-    override fun sample(): Map<String, Any> {
-        return constantParams + names.withIndex()
-            .map { (index, name) ->
-                val value: Any = when (paramType[index]) {
-                    XType.DOUBLE -> Random.nextDouble(
-                        bounds[index].lower,
-                        bounds[index].upper
-                    )
-                    XType.INT -> Random.nextInt(
-                        ceil(bounds[index].lower).toInt(),
-                        bounds[index].upper.toInt() + 1
-                    )
-                }
-                name to value
-            }
-            .toMap()
+    override fun validate(index: Int, value: Any): Boolean {
+        val x = value.toUncheckedDouble()
+        return x >= bounds[index].lower && x <= bounds[index].upper
     }
 
-    override fun validate(index: Int, value: Any): Boolean {
-        val x = (value as Number).toDouble()
-        return x >= bounds[index].lower && x <= bounds[index].upper
+    override fun sampleWithConstants(): Map<String, Any> {
+        val variableParams = this.sample()
+        val params = (constantParams + variableParams).toMutableMap()
+        (names zip paramTypes).filter { it.second == XType.INT }.forEach {
+            params[it.first] = variableParams[it.first].toUncheckedInt()
+        }
+        return params
+    }
+
+    override fun sample(): Map<String, Double> {
+        return (names zip bounds)
+            .map { (name, bound) -> name to bound.sample() }
+            .toMap()
     }
 
     override fun getBounds(): Array<Bound> {

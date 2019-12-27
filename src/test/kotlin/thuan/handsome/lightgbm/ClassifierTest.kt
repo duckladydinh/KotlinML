@@ -15,7 +15,7 @@ class ClassifierTest {
             "max_depth" to 30,
             "min_split_gain" to 0.5,
             "min_child_weight" to 1,
-            "is_unbalance" to false
+            "is_unbalance" to true
         )
 
         var start = System.currentTimeMillis()

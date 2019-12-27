@@ -5,7 +5,7 @@ import thuan.handsome.core.utils.NativeLoader
 import thuan.handsome.core.xspace.Bound
 import thuan.handsome.lbfgsb.jni.*
 
-class CWrapper private constructor(private val dimensions: Int, numCorrections: Int) {
+class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrections: Int) {
     private val data: lbfgsb = lbfgsb_wrapper.lbfgsb_create(dimensions, numCorrections)
 
     companion object {
@@ -66,7 +66,7 @@ class CWrapper private constructor(private val dimensions: Int, numCorrections: 
                 "Bounds number (${bounds.size}) doesn't match starting point size (${xZero.size})"
             }
 
-            val optimizer = CWrapper(xZero.size, maxCorrections).apply {
+            val optimizer = LBFGSBWrapper(xZero.size, maxCorrections).apply {
                 setX(xZero)
                 setBounds(bounds)
                 setDebugLevel(verbose)
