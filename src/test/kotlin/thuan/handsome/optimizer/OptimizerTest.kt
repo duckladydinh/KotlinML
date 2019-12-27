@@ -94,7 +94,7 @@ class OptimizerTest {
                 return scores.min()!!
             },
             xSpace,
-            30
+            20
         )
 
         val booster = Booster.fit(params, trainData, trainLabel, 30)

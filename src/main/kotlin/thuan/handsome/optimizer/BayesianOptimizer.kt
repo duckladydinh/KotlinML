@@ -107,7 +107,7 @@ class BayesianOptimizer : Optimizer {
             return func.invoke(params)
         }
 
-        val (x, y) = maximize(f, xSpace)
+        val (x, y) = maximize(f, xSpace, maxiter)
         return Pair(xSpace.decorate(x), y)
     }
 }

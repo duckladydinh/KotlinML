@@ -1,7 +1,6 @@
 package thuan.handsome.gp.kernel
 
-import koma.extensions.get
-import koma.extensions.set
+import koma.extensions.*
 import koma.matrix.Matrix
 import koma.ndarray.NDArray
 import koma.pow
@@ -46,6 +45,24 @@ class RBFKernel constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kerne
         return covMat
     }
 
+    private fun getDists(dataX: Matrix<Double>, dataY: Matrix<Double>, theta: DoubleArray): Matrix<Double> {
+        val n = dataX.numRows()
+        val m = dataY.numRows()
+        val covMat = zeros(n, m)
+        val lengthScale = getLengthScale(theta)
+
+        for (i in 0 until n) {
+            val start = if (n == m) i + 1 else 0
+            for (j in start until m) {
+                covMat[i, j] = distanceNormal(dataX.getRow(i).transpose(), dataY.getRow(j).transpose(), lengthScale)
+                if (n == m) {
+                    covMat[j, i] = covMat[i, j]
+                }
+            }
+        }
+        return covMat
+    }
+
     /**
 	 * @param data is a set of x (x:horizontal)
 	 *
@@ -77,16 +94,17 @@ class RBFKernel constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kerne
         covMat: Matrix<Double>,
         theta: DoubleArray
     ): NDArray<Double> {
-        val (n, m) = data.shape()
+        require(theta.size == getDim())
+        val n = data.numRows()
+        val m = getDim()
         val grads = NDArray.doubleFactory.zeros(n, n, m)
 
-        val lengthScale = getLengthScale(theta)
+        val dists = getDists(data, data, theta)
+        val tmp = covMat emul dists
 
         for (i in 0 until n) {
             for (j in 0 until n) {
-                for (k in 0 until m) {
-                    grads[i, j, k] += (data[i, k] - data[j, k]).pow(2) / (lengthScale.pow(2)) * covMat[i, j]
-                }
+                grads[i, j, 0] += tmp[i, j]
             }
         }
 
@@ -103,6 +121,10 @@ class RBFKernel constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kerne
     private fun distance(x: Matrix<Double>, y: Matrix<Double>, lengthScale: Double): Double {
         val d = x - y
         return exp(-0.5 * (0 until d.numRows()).map { (d[it] / lengthScale).pow(2) }.sum())
+    }
+    private fun distanceNormal(x: Matrix<Double>, y: Matrix<Double>, lengthScale: Double): Double {
+        val d = x - y
+        return (0 until d.numRows()).map { (d[it] / lengthScale).pow(2) }.sum()
     }
 
     private fun getLengthScale(theta: DoubleArray): Double {
