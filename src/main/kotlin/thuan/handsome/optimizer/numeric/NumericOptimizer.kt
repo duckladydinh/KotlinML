@@ -16,7 +16,8 @@ interface NumericOptimizer {
         ): XYPoint {
             when (type) {
                 OptimizerType.L_BFGS_B -> {
-                    val summary = LBFGSBWrapper.minimize(func.negate(), xZero, bounds, maxiter)
+                    val negatedFunc = func.negate()
+                    val summary = LBFGSBWrapper.minimize(negatedFunc, xZero, bounds, maxiter)
                     return XYPoint(summary.x, -summary.y)
                 }
                 else -> throw UnsupportedOperationException("Optimizer type '$type' is unsupported!")

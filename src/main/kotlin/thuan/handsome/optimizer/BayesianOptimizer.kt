@@ -6,7 +6,7 @@ import thuan.handsome.core.function.DifferentialFunction
 import thuan.handsome.core.utils.LOGGER
 import thuan.handsome.core.xspace.XSpace
 import thuan.handsome.gp.GPRegressor
-import thuan.handsome.lbfgsb.LBFGSBWrapper
+import thuan.handsome.optimizer.numeric.NumericOptimizer
 import thuan.handsome.optimizer.numeric.XYPoint
 
 class BayesianOptimizer : Optimizer {
@@ -19,9 +19,10 @@ class BayesianOptimizer : Optimizer {
 
             val data = mutableListOf(bestX)
             val y = mutableListOf(bestY)
+            LOGGER.info { "Iteration %3d | y = %.6f | bestY = %.6f.".format(1, bestY, bestY) }
 
             // warm-up
-            repeat(4) {
+            for (iter in 2..5) {
                 val x = xSpace.sample()
                 val res = func.invoke(x)
                 data.add(x)
@@ -31,6 +32,7 @@ class BayesianOptimizer : Optimizer {
                     bestY = res
                     bestX = x
                 }
+                LOGGER.info { "Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, res, bestY) }
             }
 
             for (iter in 6..maxiter) {
@@ -58,26 +60,40 @@ class BayesianOptimizer : Optimizer {
             return XYPoint(bestX, bestY)
         }
 
-        fun suggest(xSpace: XSpace, func: (DoubleArray) -> Double, maxiter: Int = 100): DoubleArray {
+        fun suggest(xSpace: XSpace, func: (DoubleArray) -> Double, maxiter: Int = 1000): DoubleArray {
             var bestX = xSpace.sample()
-            val bestValue = func.invoke(bestX)
+            var bestValue = func.invoke(bestX)
+            val diffFunc = DifferentialFunction.from { func.invoke(it) }
 
             for (iter in 2..maxiter) {
                 val xZero = xSpace.sample()
-                val summary =
-                    LBFGSBWrapper.minimize(DifferentialFunction.from { -func.invoke(it) }, xZero, xSpace.getBounds())
-                if (bestValue < summary.y) {
+                val summary = NumericOptimizer.maximize(
+                    diffFunc,
+                    xZero,
+                    xSpace.getBounds()
+                )
+                if (summary.y > bestValue) {
+                    bestValue = summary.y
                     bestX = summary.x
                 }
+
+                // this version consistently gives better result
+                // val xZero = xSpace.sample()
+                // val summary =
+                // 	LBFGSBWrapper.minimize(DifferentialFunction.from { -func.invoke(it) }, xZero, xSpace.getBounds())
+                // if (bestValue < summary.y) {
+                // 	bestX = summary.x
+                // }
             }
 
+            LOGGER.info { "Best Suggestion Score $bestValue" }
             return bestX
         }
 
         fun ucb(x: DoubleArray, gp: GPRegressor, kappa: Double = 2.567): Double {
             val (mean, variance) = gp.predict(x)
             val std = sqrt(variance)
-            return mean * kappa * std
+            return mean + kappa * std
         }
     }
 

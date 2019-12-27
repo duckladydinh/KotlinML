@@ -21,12 +21,12 @@ class OptimizerTest {
                 "is_unbalance" to true
             )
         )
-        xSpace.addParam("feature_fraction", 0.0, 1.0)
-        xSpace.addParam("bagging_fraction", 0.0, 1.0)
-        xSpace.addParam("max_depth", 10.0, 30.0, XType.INT)
-        xSpace.addParam("num_leaves", 100.0, 500.0, XType.INT)
-        xSpace.addParam("min_split_gain", 0.0, 1.0)
-        xSpace.addParam("min_child_weight", 1.0, 10.0, XType.INT)
+        xSpace.addParam("feature_fraction", 0.1, 0.9)
+        xSpace.addParam("bagging_fraction", 0.8, 1.0)
+        xSpace.addParam("max_depth", 17.0, 25.0, XType.INT)
+        xSpace.addParam("num_leaves", 50.0, 500.0, XType.INT)
+        xSpace.addParam("min_split_gain", 0.001, 0.1)
+        xSpace.addParam("min_child_weight", 10.0, 25.0, XType.INT)
 
         val optimizer = UniformOptimizer()
 
@@ -79,12 +79,12 @@ class OptimizerTest {
                 "is_unbalance" to true
             )
         )
-        xSpace.addParam("feature_fraction", 0.0, 1.0)
-        xSpace.addParam("bagging_fraction", 0.0, 1.0)
-        xSpace.addParam("max_depth", 10.0, 30.0, XType.INT)
-        xSpace.addParam("num_leaves", 100.0, 500.0, XType.INT)
-        xSpace.addParam("min_split_gain", 0.0, 1.0)
-        xSpace.addParam("min_child_weight", 1.0, 10.0, XType.INT)
+        xSpace.addParam("feature_fraction", 0.1, 0.9)
+        xSpace.addParam("bagging_fraction", 0.8, 1.0)
+        xSpace.addParam("max_depth", 17.0, 25.0, XType.INT)
+        xSpace.addParam("num_leaves", 50.0, 500.0, XType.INT)
+        xSpace.addParam("min_split_gain", 0.001, 0.1)
+        xSpace.addParam("min_child_weight", 10.0, 25.0, XType.INT)
 
         val optimizer = BayesianOptimizer()
 

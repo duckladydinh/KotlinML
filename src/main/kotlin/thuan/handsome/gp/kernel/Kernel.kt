@@ -10,4 +10,5 @@ interface Kernel {
     fun getCovarianceMatrix(dataX: Matrix<Double>, dataY: Matrix<Double>, theta: DoubleArray): Matrix<Double>
     fun getCovarianceMatrix(data: Matrix<Double>, theta: DoubleArray): Matrix<Double>
     fun getThetaBounds(): XSpace
+    fun getDim(): Int
 }

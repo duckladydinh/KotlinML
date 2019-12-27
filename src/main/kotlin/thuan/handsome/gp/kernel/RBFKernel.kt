@@ -10,9 +10,7 @@ import kotlin.math.exp
 import kotlin.math.ln
 import thuan.handsome.core.xspace.*
 
-class RBFKernel private constructor(private val bounds: Array<Bound>) : Kernel {
-    constructor(dimension: Int) : this(Bound(1e-5, 1e5).times(dimension))
-
+class RBFKernel constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kernel {
     override fun getCovarianceMatrixTrace(
         dataX: Matrix<Double>,
         dataY: Matrix<Double>,
@@ -59,10 +57,12 @@ class RBFKernel private constructor(private val bounds: Array<Bound>) : Kernel {
 
     override fun getThetaBounds(): XSpace {
         val xSpace = UniformXSpace()
-        for ((i, bound) in bounds.withIndex()) {
-            xSpace.addParam("P$i", ln(bound.lower) * 1.01, ln(bound.upper) * 0.99)
-        }
+        xSpace.addParam("B", ln(bound.lower) * 1.01, ln(bound.upper) * 0.99)
         return xSpace
+    }
+
+    override fun getDim(): Int {
+        return 1
     }
 
     /**
@@ -85,7 +85,7 @@ class RBFKernel private constructor(private val bounds: Array<Bound>) : Kernel {
         for (i in 0 until n) {
             for (j in 0 until n) {
                 for (k in 0 until m) {
-                    grads[i, j, k] += (data[i, k] - data[j, k]).pow(2) / (lengthScale[k].pow(2)) * covMat[i, j]
+                    grads[i, j, k] += (data[i, k] - data[j, k]).pow(2) / (lengthScale.pow(2)) * covMat[i, j]
                 }
             }
         }
@@ -100,15 +100,13 @@ class RBFKernel private constructor(private val bounds: Array<Bound>) : Kernel {
 	 *
 	 * @return K(x, y) = [ (x - y) .^ 2 ] dot theta is similarity between x and y
 	 */
-    private fun distance(x: Matrix<Double>, y: Matrix<Double>, lengthScale: DoubleArray): Double {
+    private fun distance(x: Matrix<Double>, y: Matrix<Double>, lengthScale: Double): Double {
         val d = x - y
-        return exp(-0.5 * (0 until d.numRows()).map { (d[it] / lengthScale[it]).pow(2) }.sum())
+        return exp(-0.5 * (0 until d.numRows()).map { (d[it] / lengthScale).pow(2) }.sum())
     }
 
-    private fun getLengthScale(theta: DoubleArray): DoubleArray {
-        return DoubleArray(theta.size) {
-            val x = exp(theta[it])
-            x
-        }
+    private fun getLengthScale(theta: DoubleArray): Double {
+        require(theta.size == 1)
+        return exp(theta[0])
     }
 }

@@ -16,11 +16,11 @@ import thuan.handsome.optimizer.numeric.NumericOptimizer
 class GPRegressor internal constructor(
     private val data: Matrix<Double>, // list of horizontal vectors
     private val y: Matrix<Double>, // vertical vector of size |data|
-    private val kernel: Kernel = RBFKernel(data.numCols()),
+    private val kernel: Kernel = RBFKernel(),
     private val noise: Double = 1e-10,
     normalizeY: Boolean = false
 ) {
-    var bestTheta = DoubleArray(data.numCols())
+    var bestTheta = DoubleArray(kernel.getDim())
 
     private lateinit var covMatCholesky: Matrix<Double>
     private lateinit var covMatInv: Matrix<Double>
@@ -28,7 +28,7 @@ class GPRegressor internal constructor(
     // alpha is a vertical vector where covMat * alpha = y
     private lateinit var alpha: Matrix<Double>
 
-    private var likelihoodGrads = DoubleArray(data.numCols())
+    private var likelihoodGrads = DoubleArray(kernel.getDim())
     private var yMean = if (normalizeY) y.mean() else 0.0
     private var xSpace: XSpace = kernel.getThetaBounds()
     private var isPosterior = false
@@ -70,7 +70,6 @@ class GPRegressor internal constructor(
 	 * @return a mean and variance of x's goodness
 	 */
     fun predict(x: DoubleArray): GPPrediction {
-        require(x.size == xSpace.getDim())
 
         val xMat = create(x)
         var predYVar = kernel.getCovarianceMatrixTrace(xMat, xMat, this.bestTheta)[0]
@@ -78,6 +77,7 @@ class GPRegressor internal constructor(
         if (!this.isPosterior) {
             return GPPrediction(0.0, predYVar)
         }
+        require(x.size == this.data.numCols())
 
         // horizontal vector
         val predK = kernel.getCovarianceMatrix(create(x), this.data, this.bestTheta)
@@ -99,21 +99,19 @@ class GPRegressor internal constructor(
 	 */
 
     fun evaluate(theta: DoubleArray, computeGradient: Boolean = false): DifferentialEvaluation {
-        val (n, m) = this.data.shape()
-        require(m == xSpace.getDim())
+        require(theta.size == kernel.getDim())
+
+        val n = this.data.numRows()
+        val m = kernel.getDim()
 
         this.likelihood = Double.NEGATIVE_INFINITY
-        repeat(m) {
-            this.likelihoodGrads[it] = 0.0
+        for (i in 0 until m) {
+            this.likelihoodGrads[i] = 0.0
         }
-        val valid = (0 until m).all {
-            xSpace.validate(it, theta[it])
-        }
-        if (!valid) {
-            return DifferentialEvaluation(
-                this.likelihood,
-                this.likelihoodGrads
-            )
+        for (i in 0 until m) {
+            if (!xSpace.validate(i, theta[i])) {
+                return DifferentialEvaluation(this.likelihood, this.likelihoodGrads)
+            }
         }
 
         this.covMat = this.kernel.getCovarianceMatrix(this.data, theta) + eye(n) * noise
