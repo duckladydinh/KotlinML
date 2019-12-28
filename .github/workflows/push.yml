@@ -14,5 +14,5 @@ jobs:
       run: sudo apt install libgfortran-9-dev
     - uses: eskatos/gradle-command-action@v1
       with:
-        arguments: clean build -x test
+        arguments: clean build
  
