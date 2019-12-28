@@ -3,6 +3,7 @@ package thuan.handsome.optimizer
 import kotlin.math.pow
 import kotlin.math.sqrt
 import org.junit.Test
+import thuan.handsome.core.metrics.classificationAccuracyScore
 import thuan.handsome.core.metrics.f1score
 import thuan.handsome.core.utils.LOGGER
 import thuan.handsome.core.utils.getXY
@@ -10,6 +11,10 @@ import thuan.handsome.core.xspace.UniformXSpace
 import thuan.handsome.core.xspace.XType
 import thuan.handsome.lightgbm.Booster
 
+/**
+ * This test has no validation since I only want to see how it runs,
+ * and ensure that there is no runtime exception
+ */
 class OptimizerTest {
     private companion object {
         fun ucb(x: DoubleArray, kappa: Double = 2.576): Double {
@@ -21,7 +26,7 @@ class OptimizerTest {
             return mean + kappa * std
         }
 
-        fun testOptimizer(optimizer: Optimizer) {
+        fun testOptimizer(optimizer: Optimizer, metric: (DoubleArray, DoubleArray) -> Double) {
             val (trainData, trainLabel) = getXY(
                 "/data/gecco2018_water_train.csv", 0
             )
@@ -47,7 +52,7 @@ class OptimizerTest {
 
             val (params, _) = optimizer.argmax(
                 fun(params: Map<String, Any>): Double {
-                    val scores = Booster.cv(::f1score, params, trainData, trainLabel, 30, 5)
+                    val scores = Booster.cv(metric, params, trainData, trainLabel, 30, 5)
                     return ucb(scores)
                 },
                 xSpace,
@@ -58,12 +63,12 @@ class OptimizerTest {
             val trainedPreds = booster.predict(trainData)
 
             LOGGER.info {
-                "Train F1 = ${f1score(trainedPreds, trainLabel)}"
+                "Train F1 = ${metric.invoke(trainedPreds, trainLabel)}"
             }
 
             val testPreds = booster.predict(testData)
             LOGGER.info {
-                "Test F1 = ${f1score(testPreds, testLabel)}"
+                "Test F1 = ${metric.invoke(testPreds, testLabel)}"
             }
 
             booster.close()
@@ -71,12 +76,22 @@ class OptimizerTest {
     }
 
     @Test
-    fun randomOptimizer() {
-        testOptimizer(UniformOptimizer())
+    fun randomOptimizerWithAccuracy() {
+        testOptimizer(UniformOptimizer(), ::classificationAccuracyScore)
     }
 
     @Test
-    fun bayesianOptimizer() {
-        testOptimizer(BayesianOptimizer())
+    fun bayesianOptimizerWithAccuracy() {
+        testOptimizer(BayesianOptimizer(), ::classificationAccuracyScore)
+    }
+
+    @Test
+    fun randomOptimizerWithF1Score() {
+        testOptimizer(UniformOptimizer(), ::f1score)
+    }
+
+    @Test
+    fun bayesianOptimizerWithF1Score() {
+        testOptimizer(BayesianOptimizer(), ::f1score)
     }
 }

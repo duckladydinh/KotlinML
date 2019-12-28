@@ -34,3 +34,22 @@ fun f1score(predicted: DoubleArray, target: DoubleArray): Double {
 
     return 2 * (precision * recall) / (precision + recall)
 }
+
+fun classificationAccuracyScore(predicted: DoubleArray, target: DoubleArray): Double {
+    require(predicted.size == target.size)
+    require(predicted.isNotEmpty())
+
+    val n = predicted.size
+    var corrects = 0.0
+
+    repeat(n) {
+        val x = predicted[it].roundToInt()
+        val y = target[it].roundToInt()
+
+        if (x == y) {
+            corrects += 1
+        }
+    }
+
+    return corrects / n
+}
