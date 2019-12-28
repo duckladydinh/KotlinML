@@ -76,21 +76,13 @@ class BayesianOptimizer : Optimizer {
                     bestValue = summary.y
                     bestX = summary.x
                 }
-
-                // this version consistently gives better result
-                // val xZero = xSpace.sample()
-                // val summary =
-                // 	LBFGSBWrapper.minimize(DifferentialFunction.from { -func.invoke(it) }, xZero, xSpace.getBounds())
-                // if (bestValue < summary.y) {
-                // 	bestX = summary.x
-                // }
             }
 
             LOGGER.info { "Best Suggestion Score $bestValue" }
             return bestX
         }
 
-        fun ucb(x: DoubleArray, gp: GPRegressor, kappa: Double = 2.567): Double {
+        fun ucb(x: DoubleArray, gp: GPRegressor, kappa: Double = 2.576): Double {
             val (mean, variance) = gp.predict(x)
             val std = sqrt(variance)
             return mean + kappa * std

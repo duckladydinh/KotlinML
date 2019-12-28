@@ -8,10 +8,6 @@ import org.junit.Test
 import thuan.handsome.core.utils.LOGGER
 
 class GPRegressorTest {
-    companion object {
-        const val EPS = 1e-9
-    }
-
     @Test
     fun logMarginalLikelihoodTest() {
         val data = create(doubleArrayOf(1.0, 3.0, 5.0, 6.0, 7.0, 8.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0)).reshape(6, 2)
@@ -34,7 +30,7 @@ class GPRegressorTest {
         val (likelihood, _) = res
         assertTrue(likelihood >= -35)
 
-        val (mean, variance) = gp.predict(doubleArrayOf(2.5, 3.5))
+        val (mean, _) = gp.predict(doubleArrayOf(2.5, 3.5))
         assertTrue(mean >= -0.5)
     }
 

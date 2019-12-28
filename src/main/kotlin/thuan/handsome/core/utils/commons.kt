@@ -5,12 +5,6 @@ import mu.KotlinLogging
 
 val LOGGER = KotlinLogging.logger {}
 
-fun <T> Collection<T>.toUncheckedDoubleArray(): DoubleArray {
-    return this
-        .map { it.toUncheckedDouble() }
-        .toDoubleArray()
-}
-
 fun <T> T.toUncheckedInt(): Int {
     return if (this is Int) this else (this as Double).roundToInt()
 }

@@ -3,103 +3,92 @@ package thuan.handsome.gp.kernel
 import koma.extensions.*
 import koma.matrix.Matrix
 import koma.ndarray.NDArray
-import koma.pow
 import koma.zeros
 import kotlin.math.exp
 import kotlin.math.ln
 import thuan.handsome.core.xspace.*
 
 class RBFKernel constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kernel {
-    override fun getCovarianceMatrixTrace(
-        dataX: Matrix<Double>,
-        dataY: Matrix<Double>,
-        theta: DoubleArray
-    ): DoubleArray {
-        return DoubleArray(dataX.numRows()) { 1.0 }
+    companion object {
+        /**
+		 * @param dataX is a set of x (x:horizontal)
+		 * @param dataY is a set of y (y:horizontal)
+		 *
+		 * @return |dataX| by |dataY| distance matrix between all pair of rows (x, y) and diagonal = 0...
+		 */
+        private fun getDists(
+            dataX: Matrix<Double>,
+            dataY: Matrix<Double>,
+            theta: DoubleArray,
+            symmetric: Boolean = false
+        ): Matrix<Double> {
+            val n = dataX.numRows()
+            val m = dataY.numRows()
+            val covMat = zeros(n, m)
+            val lengthScale = getLengthScale(theta)
+
+            if (symmetric) {
+                for (i in 0 until n) {
+                    for (j in i + 1 until m) {
+                        val dist = distance(dataX.getRow(i).transpose(), dataY.getRow(j).transpose(), lengthScale)
+                        covMat[i, j] = dist
+                        covMat[j, i] = dist
+                    }
+                }
+            } else {
+                for (i in 0 until n) {
+                    for (j in 0 until m) {
+                        covMat[i, j] = distance(dataX.getRow(i).transpose(), dataY.getRow(j).transpose(), lengthScale)
+                    }
+                }
+            }
+            return covMat
+        }
+
+        /**
+		 * @param x is a vertical vector
+		 *
+		 * @param y is a vertical vector
+		 *
+		 * @return d(x, y) = [ (x - y) ./ lengthScale .^ 2 ] is distance between x and y
+		 */
+        private fun distance(x: Matrix<Double>, y: Matrix<Double>, lengthScale: Double): Double {
+            return ((x - y) / lengthScale).epow(2).elementSum()
+        }
+
+        /**
+		 * @param distMat = d(X, Y) from distance for the whole matrix
+		 *
+		 * @return K(x, y) = exp(-0.5 * d(x, y)) is the similarity between x and y
+		 */
+        private fun kernelApply(distMat: Matrix<Double>): Matrix<Double> {
+            return distMat.map { exp(-0.5 * it) }
+        }
+
+        /**
+		 * @param theta is external control parameter
+		 *
+		 * @return lengthScale, the primary control parameter of this kernel
+		 */
+        private fun getLengthScale(theta: DoubleArray): Double {
+            require(theta.size == 1)
+            return exp(theta[0])
+        }
     }
 
-    /**
-	 * @param dataX is a set of x (x:horizontal)
-	 * @param dataY is a set of y (y:horizontal)
-	 *
-	 * @return |dataX| by |dataY| covariance symmetric matrix between all pair of (x, y) and diagonal = 1...
-	 */
     override fun getCovarianceMatrix(dataX: Matrix<Double>, dataY: Matrix<Double>, theta: DoubleArray): Matrix<Double> {
-        val n = dataX.numRows()
-        val m = dataY.numRows()
-        val covMat = zeros(n, m)
-        val lengthScale = getLengthScale(theta)
-
-        for (i in 0 until n) {
-            val start = if (n == m) i + 1 else 0
-            for (j in start until m) {
-                covMat[i, j] = distance(dataX.getRow(i).transpose(), dataY.getRow(j).transpose(), lengthScale)
-                if (n == m) {
-                    covMat[j, i] = covMat[i, j]
-                }
-            }
-            if (n == m) {
-                covMat[i, i] = 1
-            }
-        }
-        return covMat
+        val dists = getDists(dataX, dataY, theta)
+        return kernelApply(dists)
     }
 
-    private fun getDists(dataX: Matrix<Double>, dataY: Matrix<Double>, theta: DoubleArray): Matrix<Double> {
-        val n = dataX.numRows()
-        val m = dataY.numRows()
-        val covMat = zeros(n, m)
-        val lengthScale = getLengthScale(theta)
-
-        for (i in 0 until n) {
-            val start = if (n == m) i + 1 else 0
-            for (j in start until m) {
-                covMat[i, j] = distanceNormal(dataX.getRow(i).transpose(), dataY.getRow(j).transpose(), lengthScale)
-                if (n == m) {
-                    covMat[j, i] = covMat[i, j]
-                }
-            }
-        }
-        return covMat
-    }
-
-    /**
-	 * @param data is a set of x (x:horizontal)
-	 *
-	 * @return |data| by |data| covariance matrix between all pair of data's instances
-	 */
-    override fun getCovarianceMatrix(data: Matrix<Double>, theta: DoubleArray): Matrix<Double> {
-        return getCovarianceMatrix(data, data, theta)
-    }
-
-    override fun getThetaBounds(): XSpace {
-        val xSpace = UniformXSpace()
-        xSpace.addParam("B", ln(bound.lower) * 1.01, ln(bound.upper) * 0.99)
-        return xSpace
-    }
-
-    override fun getDim(): Int {
-        return 1
-    }
-
-    /**
-	 * @param data is a set of x (x:horizontal)
-	 *
-	 * @param covMat is the pre-computed covariance matrix
-	 *
-	 * @return |data| by |data| by |theta| covariance matrix between all pair of data's instances and its gradients
-	 */
-    override fun getCovarianceMatrixGradient(
-        data: Matrix<Double>,
-        covMat: Matrix<Double>,
-        theta: DoubleArray
-    ): NDArray<Double> {
+    override fun getCovarianceMatrixGradient(data: Matrix<Double>, theta: DoubleArray): NDArray<Double> {
         require(theta.size == getDim())
         val n = data.numRows()
         val m = getDim()
-        val grads = NDArray.doubleFactory.zeros(n, n, m)
 
+        val grads = NDArray.doubleFactory.zeros(n, n, m)
         val dists = getDists(data, data, theta)
+        val covMat = kernelApply(dists)
         val tmp = covMat emul dists
 
         for (i in 0 until n) {
@@ -111,24 +100,22 @@ class RBFKernel constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kerne
         return grads
     }
 
-    /**
-	 * @param x is a vertical vector
-	 *
-	 * @param y is a vertical vector
-	 *
-	 * @return K(x, y) = [ (x - y) .^ 2 ] dot theta is similarity between x and y
-	 */
-    private fun distance(x: Matrix<Double>, y: Matrix<Double>, lengthScale: Double): Double {
-        val d = x - y
-        return exp(-0.5 * (0 until d.numRows()).map { (d[it] / lengthScale).pow(2) }.sum())
-    }
-    private fun distanceNormal(x: Matrix<Double>, y: Matrix<Double>, lengthScale: Double): Double {
-        val d = x - y
-        return (0 until d.numRows()).map { (d[it] / lengthScale).pow(2) }.sum()
+    override fun getCovarianceMatrixTrace(data: Matrix<Double>, theta: DoubleArray): DoubleArray {
+        return DoubleArray(data.numRows()) { 1.0 }
     }
 
-    private fun getLengthScale(theta: DoubleArray): Double {
-        require(theta.size == 1)
-        return exp(theta[0])
+    override fun getCovarianceMatrix(data: Matrix<Double>, theta: DoubleArray): Matrix<Double> {
+        val dists = getDists(data, data, theta, symmetric = true)
+        return kernelApply(dists)
+    }
+
+    override fun getThetaBounds(): XSpace {
+        val xSpace = UniformXSpace()
+        xSpace.addParam("B", ln(bound.lower) * 1.01, ln(bound.upper) * 0.99)
+        return xSpace
+    }
+
+    override fun getDim(): Int {
+        return 1
     }
 }

@@ -70,19 +70,20 @@ class GPRegressor internal constructor(
 	 * @return a mean and variance of x's goodness
 	 */
     fun predict(x: DoubleArray): GPPrediction {
-
         val xMat = create(x)
-        var predYVar = kernel.getCovarianceMatrixTrace(xMat, xMat, this.bestTheta)[0]
+        var predYVar = kernel.getCovarianceMatrixTrace(xMat, this.bestTheta)[0]
 
         if (!this.isPosterior) {
+            // this is the same prior probability for all kernels
             return GPPrediction(0.0, predYVar)
         }
-        require(x.size == this.data.numCols())
 
-        // horizontal vector
+        require(x.size == this.data.numCols())
+        // predK is a horizontal vector and predYMean is definitely a double, we use dot product
+        // here because we are certain that predK has only 1 row for 1 x
         val predK = kernel.getCovarianceMatrix(create(x), this.data, this.bestTheta)
-        // definitely a double
         val predYMean = this.yMean + dot(predK, this.alpha)
+
         // horizontal vector predK * K
         val predKK = predK * this.covMatInv
         predYVar -= dot(predKK, predK)
@@ -126,7 +127,7 @@ class GPRegressor internal constructor(
         this.likelihood -= 0.5 * n * ln(2 * PI)
 
         if (computeGradient) {
-            val covMatGrads = this.kernel.getCovarianceMatrixGradient(this.data, this.covMat, theta)
+            val covMatGrads = this.kernel.getCovarianceMatrixGradient(this.data, theta)
             val tmp = (alpha * alpha.T) - this.covMatInv * eye(n)
 
             for (i in 0 until n) {
