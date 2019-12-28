@@ -22,13 +22,13 @@ class GPRegressorTest {
     fun fitAndPredictionTest() {
         val data = create(doubleArrayOf(1.0, 3.0, 5.0, 6.0, 7.0, 8.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0)).reshape(6, 2)
         val y = create(doubleArrayOf(0.84147098, -4.79462137, 4.59890619, -1.67649299, -3.02720998, 1.81859485)).T
-        val gp = GPRegressor.fit(data, y, numOptimizerRestarts = 2)
+        val gp = GPRegressor.fit(data, y, maxiter = 3)
 
         val res = gp.evaluate(gp.bestTheta, computeGradient = true)
         LOGGER.info { res }
 
         val (likelihood, _) = res
-        assertTrue(likelihood >= -35)
+        assertTrue(likelihood >= -40)
 
         val (mean, _) = gp.predict(doubleArrayOf(2.5, 3.5))
         assertTrue(mean >= -0.5)
@@ -61,7 +61,7 @@ class GPRegressorTest {
                 0.48059644311646, 0.87264805428758, 23.80947603416959, 256.8219850534997, 0.03000618607911, 15.48869643858346 end
                 0.90, 1.00, 25.00, 294.6594444498247, 0.10, 10.00 ]
         val y = mat[0.6321138211382115, 0.8245125348189416, 0.6103092783505155, 0.9486823855755894, 0.9370629370629371, 0.8968363136176066, 0.9532163742690059].T
-        val gp = GPRegressor.fit(data, y, 0)
+        val gp = GPRegressor.fit(data, y, 1)
         gp.bestTheta = theta
         LOGGER.info { gp.evaluate(gp.bestTheta, true) }
         val res = gp.predict(x)

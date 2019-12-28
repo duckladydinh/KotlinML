@@ -35,7 +35,9 @@ class GPRegressor internal constructor(
     private var likelihood = 0.0
 
     companion object {
-        fun fit(data: Matrix<Double>, y: Matrix<Double>, numOptimizerRestarts: Int = 0): GPRegressor {
+        fun fit(data: Matrix<Double>, y: Matrix<Double>, maxiter: Int = 1): GPRegressor {
+            require(maxiter >= 1)
+
             val gp = GPRegressor(data, y)
             val func = DifferentialFunction {
                 gp.evaluate(it, true)
@@ -44,10 +46,11 @@ class GPRegressor internal constructor(
             var bestLogLikelihood = Double.NEGATIVE_INFINITY
             var bestTheta = gp.bestTheta
 
-            for (iter in 0..numOptimizerRestarts) {
+            for (iter in 1..maxiter) {
                 val thetaZero = if (iter == 0) gp.bestTheta else gp.xSpace.sample()
                 val res = NumericOptimizer.maximize(func, thetaZero, bounds = gp.xSpace.getBounds())
-                if (bestLogLikelihood < res.y) {
+
+                if (res.y > bestLogLikelihood) {
                     bestLogLikelihood = res.y
                     bestTheta = res.x
                 }

@@ -3,6 +3,10 @@ package thuan.handsome.core.env
 import java.io.*
 import java.nio.file.Files
 
+/**
+ * Please make sure that the native library file is located in either
+ * topLevelResourcesPath + {linux, windows, osx}/x86_64 + libName.xxx
+ */
 class NativeLoader(topLevelResourcesPath: String) : Serializable {
     companion object {
         val osPrefix: String

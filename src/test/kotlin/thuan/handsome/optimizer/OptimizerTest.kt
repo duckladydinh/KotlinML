@@ -2,7 +2,6 @@ package thuan.handsome.optimizer
 
 import kotlin.math.pow
 import kotlin.math.sqrt
-import krangl.mean
 import org.junit.Test
 import thuan.handsome.core.metrics.f1score
 import thuan.handsome.core.utils.LOGGER
@@ -14,8 +13,11 @@ import thuan.handsome.lightgbm.Booster
 class OptimizerTest {
     private companion object {
         fun ucb(x: DoubleArray, kappa: Double = 2.576): Double {
-            val mean = x.toList().mean()
-            val std = sqrt(x.map { (it - mean).pow(2) }.sum() / (x.size - 1))
+            val mean = x.sum() / x.size
+            val std = sqrt(
+                // variance
+                x.map { (it - mean).pow(2) }.sum() / (x.size - 1)
+            )
             return mean + kappa * std
         }
 
