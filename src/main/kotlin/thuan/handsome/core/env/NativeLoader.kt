@@ -1,4 +1,4 @@
-package thuan.handsome.core.utils
+package thuan.handsome.core.env
 
 import java.io.*
 import java.nio.file.Files

@@ -1,7 +1,9 @@
 package thuan.handsome.lightgbm
 
 import org.junit.Test
-import thuan.handsome.core.utils.*
+import thuan.handsome.core.metrics.f1score
+import thuan.handsome.core.utils.LOGGER
+import thuan.handsome.core.utils.getXY
 
 class ClassifierTest {
     @Test
@@ -15,7 +17,7 @@ class ClassifierTest {
             "max_depth" to 30,
             "min_split_gain" to 0.5,
             "min_child_weight" to 1,
-            "is_unbalance" to true
+            "is_unbalance" to false
         )
 
         var start = System.currentTimeMillis()
@@ -26,7 +28,7 @@ class ClassifierTest {
         LOGGER.info { "IO Time: ${System.currentTimeMillis() - start}" }
         start = System.currentTimeMillis()
 
-        val scores = Booster.cv(params, trainData, trainLabel, 100, 5, ::f1score)
+        val scores = Booster.cv(::f1score, params, trainData, trainLabel, 100, 5)
         LOGGER.info { "CV = ${scores.joinToString(" ")}" }
         LOGGER.info { "CV Time: ${System.currentTimeMillis() - start}" }
         start = System.currentTimeMillis()

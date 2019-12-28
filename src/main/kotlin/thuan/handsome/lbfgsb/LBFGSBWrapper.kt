@@ -1,7 +1,7 @@
 package thuan.handsome.lbfgsb
 
+import thuan.handsome.core.env.NativeLoader
 import thuan.handsome.core.function.DifferentialFunction
-import thuan.handsome.core.utils.NativeLoader
 import thuan.handsome.core.xspace.Bound
 import thuan.handsome.lbfgsb.jni.*
 

@@ -1,15 +1,23 @@
 package thuan.handsome.lightgbm
 
 import koma.matrix.Matrix
-import thuan.handsome.core.utils.sliceByRows
+import thuan.handsome.core.cv.crossValidate
+import thuan.handsome.core.predictor.Predictor
+import thuan.handsome.core.utils.LOGGER
 
-class Booster private constructor(dataset: Dataset, params: String) : CObject() {
+class Booster private constructor(dataset: Dataset, params: String) : CObject(), Predictor {
     companion object {
-        fun fit(params: Map<String, Any>, data: Matrix<Double>, label: IntArray, rounds: Int): Booster {
+        fun fit(params: Map<String, Any>, data: Matrix<Double>, label: DoubleArray, rounds: Int): Booster {
             val dataset = Dataset.from(data, label)
-            val objective = params.getOrDefault("objective", "<empty>")
-            require("binary" == objective) {
-                "Objective $objective is not yet supported! Only 'binary' is supported for now, sorry!"
+            require(params.containsKey("objective")) {
+                "Objective cannot be empty!!"
+            }
+
+            val objective = params["objective"]
+            if (objective != "binary") {
+                LOGGER.warn {
+                    "Currently, only binary classification has been tested. Be careful!"
+                }
             }
 
             val booster = Booster(dataset, getParamsString(params))
@@ -27,51 +35,21 @@ class Booster private constructor(dataset: Dataset, params: String) : CObject() 
         }
 
         fun cv(
+            metric: (DoubleArray, DoubleArray) -> Double,
             params: Map<String, Any>,
             data: Matrix<Double>,
-            label: IntArray,
+            label: DoubleArray,
             maxiter: Int,
-            nFolds: Int,
-            metric: (IntArray, IntArray) -> Double
+            nFolds: Int
         ): DoubleArray {
-            val folds = makeFolds(data.numRows(), nFolds)
-            val scores = ArrayList<Double>(folds.size)
-
-            for ((trainSet, validSet) in folds) {
-                val trainData = sliceByRows(data, trainSet)
-                val trainLabel = label.sliceArray(trainSet)
-                val validData = sliceByRows(data, validSet)
-                val validLabel = label.sliceArray(validSet)
-
-                val booster = fit(params, trainData, trainLabel, maxiter)
-                val preds = booster.predict(validData)
-                booster.close()
-
-                scores.add(metric.invoke(preds, validLabel))
-            }
-
-            return scores.toDoubleArray()
+            return crossValidate(
+                { X: Matrix<Double>, y: DoubleArray -> fit(params, X, y, maxiter) },
+                metric, data, label, nFolds
+            )
         }
 
-        private fun getParamsString(params: Map<String, Any>) =
-            params.map { "${it.key}=${it.value}" }.joinToString(separator = " ")
-
-        private fun makeFolds(n: Int, nFolds: Int): List<Pair<List<Int>, List<Int>>> {
-            val validSets = IntRange(0, n - 1).shuffled().withIndex()
-                .groupBy { it.index % nFolds }
-                .map { indexed ->
-                    indexed.value.map {
-                        it.value
-                    }
-                }
-
-            val trainSets = ArrayList<List<Int>>(nFolds)
-            for (i in validSets.indices) {
-                val trainSet = validSets.slice(IntRange(0, validSets.size - 1) - i).flatten()
-                trainSets.add(trainSet)
-            }
-
-            return trainSets zip validSets
+        private fun getParamsString(params: Map<String, Any>): String {
+            return params.map { "${it.key}=${it.value}" }.joinToString(separator = " ")
         }
     }
 
@@ -79,33 +57,7 @@ class Booster private constructor(dataset: Dataset, params: String) : CObject() 
         C_API.LGBM_BoosterCreate(dataset.handle.getVoidSinglePointer(), params, this.handle)
     }
 
-    fun predict(row: DoubleArray): Double {
-        val nativePointer = row.toNativeDoubleArray()
-        val predPointer = C_API.new_doubleArray(1)
-        val longPointer = 1.toLongPointer()
-
-        C_API.LGBM_BoosterPredictForMatSingleRow(
-            this.handle.getVoidSinglePointer(),
-            nativePointer.toVoidPointer(),
-            C_API.C_API_DTYPE_FLOAT64,
-            row.size,
-            1,
-            C_API.C_API_PREDICT_NORMAL,
-            0,
-            "",
-            longPointer,
-            predPointer
-        )
-
-        val pred = C_API.doubleArray_getitem(predPointer, 0)
-        C_API.delete_doubleArray(nativePointer)
-        C_API.delete_doubleArray(predPointer)
-        C_API.delete_int64_tp(longPointer)
-
-        return pred
-    }
-
-    fun predict(data: Matrix<Double>): IntArray {
+    override fun predict(data: Matrix<Double>): DoubleArray {
         val nativePointer = data.toNativeDoubleArray()
 
         val rows = data.numRows()
@@ -126,8 +78,8 @@ class Booster private constructor(dataset: Dataset, params: String) : CObject() 
             predPointer
         )
 
-        val preds = IntArray(rows) {
-            if (C_API.doubleArray_getitem(predPointer, it) >= 0.5) 1 else 0
+        val preds = DoubleArray(rows) {
+            C_API.doubleArray_getitem(predPointer, it)
         }
 
         C_API.delete_doubleArray(nativePointer)
@@ -137,7 +89,33 @@ class Booster private constructor(dataset: Dataset, params: String) : CObject() 
         return preds
     }
 
-    fun save(filePath: String) {
+    override fun predict(x: DoubleArray): Double {
+        val predPointer = C_API.new_doubleArray(1)
+        val nativePointer = x.toNativeDoubleArray()
+        val longPointer = 1.toLongPointer()
+
+        C_API.LGBM_BoosterPredictForMatSingleRow(
+            this.handle.getVoidSinglePointer(),
+            nativePointer.toVoidPointer(),
+            C_API.C_API_DTYPE_FLOAT64,
+            x.size,
+            1,
+            C_API.C_API_PREDICT_NORMAL,
+            0,
+            "",
+            longPointer,
+            predPointer
+        )
+
+        val pred = C_API.doubleArray_getitem(predPointer, 0)
+        C_API.delete_doubleArray(nativePointer)
+        C_API.delete_doubleArray(predPointer)
+        C_API.delete_int64_tp(longPointer)
+
+        return pred
+    }
+
+    override fun save(filePath: String) {
         C_API.LGBM_BoosterSaveModel(this.handle.getVoidSinglePointer(), 0, 0, filePath)
     }
 

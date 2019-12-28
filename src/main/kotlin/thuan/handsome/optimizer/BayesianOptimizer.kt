@@ -19,6 +19,8 @@ class BayesianOptimizer : Optimizer {
 
             val data = mutableListOf(bestX)
             val y = mutableListOf(bestY)
+
+            LOGGER.info { "WARMING UP" }
             LOGGER.info { "Iteration %3d | y = %.6f | bestY = %.6f.".format(1, bestY, bestY) }
 
             // warm-up
@@ -35,6 +37,7 @@ class BayesianOptimizer : Optimizer {
                 LOGGER.info { "Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, res, bestY) }
             }
 
+            LOGGER.info { "START TRAINING" }
             for (iter in 6..maxiter) {
                 val dataMat = create(data.toTypedArray())
                 val yMat = create(y.toDoubleArray()).T
@@ -78,7 +81,7 @@ class BayesianOptimizer : Optimizer {
                 }
             }
 
-            LOGGER.info { "Best Suggestion Score $bestValue" }
+            LOGGER.info { "Next x's UCP Score = $bestValue" }
             return bestX
         }
 

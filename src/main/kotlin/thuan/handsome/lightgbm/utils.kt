@@ -54,7 +54,7 @@ fun Matrix<Double>.toNativeDoubleArray(): P_DOUBLE {
     return nativePointer
 }
 
-fun IntArray.toFloatArray(): FloatArray {
+fun DoubleArray.toFloatArray(): FloatArray {
     return FloatArray(this.size) {
         this[it].toFloat()
     }

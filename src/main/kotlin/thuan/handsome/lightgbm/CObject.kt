@@ -1,6 +1,6 @@
 package thuan.handsome.lightgbm
 
-import thuan.handsome.core.utils.NativeLoader
+import thuan.handsome.core.env.NativeLoader
 
 abstract class CObject protected constructor() : AutoCloseable {
     val handle: PP_VOID = C_API.new_voidpp()

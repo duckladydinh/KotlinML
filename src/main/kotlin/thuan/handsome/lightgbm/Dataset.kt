@@ -5,7 +5,7 @@ import koma.matrix.Matrix
 class Dataset private constructor() : CObject() {
     companion object {
         @JvmStatic
-        fun from(data: Matrix<Double>, label: IntArray): Dataset {
+        fun from(data: Matrix<Double>, label: DoubleArray): Dataset {
             assert(label.isNotEmpty())
             assert(data.numRows() == label.size) {
                 "The number of rows must equal the number of predictions. |X| = ${data.numRows()} != |y| = ${label.size}"
