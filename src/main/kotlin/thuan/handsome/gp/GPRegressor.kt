@@ -10,13 +10,13 @@ import thuan.handsome.core.function.DifferentialEvaluation
 import thuan.handsome.core.function.DifferentialFunction
 import thuan.handsome.core.xspace.XSpace
 import thuan.handsome.gp.kernel.Kernel
-import thuan.handsome.gp.kernel.RBFKernel
+import thuan.handsome.gp.kernel.RBF
 import thuan.handsome.optimizer.numeric.NumericOptimizer
 
 class GPRegressor internal constructor(
     private val data: Matrix<Double>, // list of horizontal vectors
     private val y: Matrix<Double>, // vertical vector of size |data|
-    private val kernel: Kernel = RBFKernel(),
+    private val kernel: Kernel = RBF(),
     private val noise: Double = 1e-10,
     normalizeY: Boolean = false
 ) {

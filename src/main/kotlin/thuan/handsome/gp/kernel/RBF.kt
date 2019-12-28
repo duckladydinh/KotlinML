@@ -8,7 +8,7 @@ import kotlin.math.exp
 import kotlin.math.ln
 import thuan.handsome.core.xspace.*
 
-class RBFKernel constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kernel {
+class RBF constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kernel {
     companion object {
         /**
 		 * @param dataX is a set of x (x:horizontal)
@@ -57,12 +57,12 @@ class RBFKernel constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kerne
         }
 
         /**
-		 * @param distMat = d(X, Y) from distance for the whole matrix
+		 * @param dists = d(X, Y) from distance for the whole matrix
 		 *
 		 * @return K(x, y) = exp(-0.5 * d(x, y)) is the similarity between x and y
 		 */
-        private fun kernelApply(distMat: Matrix<Double>): Matrix<Double> {
-            return distMat.map { exp(-0.5 * it) }
+        private fun kernelApply(dists: Matrix<Double>): Matrix<Double> {
+            return koma.exp(-0.5 * dists)
         }
 
         /**
