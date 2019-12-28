@@ -19,7 +19,7 @@ class GPRegressorTest {
         val gp = GPRegressor(data, y)
         val (likelihood, grads) = gp.evaluate(doubleArrayOf(0.001), true)
         assertEquals(-34.43188191091343, likelihood)
-        assertEquals(-2.2729470072358002, grads[0])
+        assertEquals(-3.125607808495565, grads[0])
     }
 
     @Test
