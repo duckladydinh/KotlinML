@@ -8,6 +8,7 @@ import kotlin.math.PI
 import kotlin.math.ln
 import thuan.handsome.core.function.DifferentialEvaluation
 import thuan.handsome.core.function.DifferentialFunction
+import thuan.handsome.core.utils.LOGGER
 import thuan.handsome.core.xspace.XSpace
 import thuan.handsome.gp.kernel.Kernel
 import thuan.handsome.gp.kernel.RBF
@@ -35,10 +36,17 @@ class GPRegressor internal constructor(
     private var likelihood = 0.0
 
     companion object {
-        fun fit(data: Matrix<Double>, y: Matrix<Double>, maxiter: Int = 1): GPRegressor {
+        fun fit(
+            data: Matrix<Double>,
+            y: Matrix<Double>,
+            maxiter: Int = 1,
+            kernel: Kernel = RBF(),
+            noise: Double = 1e-10,
+            normalizeY: Boolean = false
+        ): GPRegressor {
             require(maxiter >= 1)
 
-            val gp = GPRegressor(data, y)
+            val gp = GPRegressor(data, y, kernel, noise, normalizeY)
             val func = DifferentialFunction {
                 gp.evaluate(it, true)
             }
@@ -68,10 +76,10 @@ class GPRegressor internal constructor(
     }
 
     /**
-	 * @param x a point which is the determining parameters of some function
-	 *
-	 * @return a mean and variance of x's goodness
-	 */
+     * @param x a point which is the determining parameters of some function
+     *
+     * @return a mean and variance of x's goodness
+     */
     fun predict(x: DoubleArray): GPPrediction {
         val xMat = create(x)
         var predYVar = kernel.getCovarianceMatrixTrace(xMat, this.bestTheta)[0]
@@ -96,11 +104,11 @@ class GPRegressor internal constructor(
     }
 
     /**
-	 * Since kernel.theta can change in each iteration,
-	 * this method will give different values accordingly
-	 *
-	 * likelihood = P(y | X, theta)
-	 */
+     * Since kernel.theta can change in each iteration,
+     * this method will give different values accordingly
+     *
+     * likelihood = P(y | X, theta)
+     */
 
     fun evaluate(theta: DoubleArray, computeGradient: Boolean = false): DifferentialEvaluation {
         require(theta.size == kernel.getDim())
@@ -122,7 +130,13 @@ class GPRegressor internal constructor(
         this.covMatInv = this.covMat.inv()
 
         this.alpha = covMatInv * this.y
-        this.covMatCholesky = covMat.chol()
+        try {
+            this.covMatCholesky = covMat.chol()
+        } catch (e: IllegalStateException) {
+            LOGGER.warn { e }
+            return DifferentialEvaluation(this.likelihood, this.likelihoodGrads)
+        }
+
         this.likelihood = 0.0
 
         this.likelihood -= covMatCholesky.diag().map { ln(it) }.elementSum()

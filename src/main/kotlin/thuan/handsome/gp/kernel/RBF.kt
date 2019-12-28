@@ -8,7 +8,7 @@ import kotlin.math.exp
 import kotlin.math.ln
 import thuan.handsome.core.xspace.*
 
-class RBF constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kernel {
+open class RBF constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kernel {
     companion object {
         /**
 		 * @param dataX is a set of x (x:horizontal)
@@ -16,7 +16,8 @@ class RBF constructor(private val bound: Bound = Bound(1e-5, 1e5)) : Kernel {
 		 *
 		 * @return |dataX| by |dataY| distance matrix between all pair of rows (x, y) and diagonal = 0...
 		 */
-        private fun getDists(
+        @JvmStatic
+        protected fun getDists(
             dataX: Matrix<Double>,
             dataY: Matrix<Double>,
             theta: DoubleArray,
