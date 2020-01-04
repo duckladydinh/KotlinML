@@ -15,7 +15,7 @@ class Matern constructor(private val nu: MaternType = TWICE_DIFFERENTIAL, bound:
     }
 
     override fun getCovarianceMatrix(dataX: Matrix<Double>, dataY: Matrix<Double>, theta: DoubleArray): Matrix<Double> {
-        val dists = getDists(dataX, dataY, theta)
+        val dists = koma.sqrt(getDists(dataX, dataY, theta))
         return kernelApply(dists)
     }
 
@@ -26,7 +26,7 @@ class Matern constructor(private val nu: MaternType = TWICE_DIFFERENTIAL, bound:
 
         val grads = NDArray.doubleFactory.zeros(n, n, m)
         val dists = getDists(data, data, theta, symmetric = true)
-        val covMat = kernelApply(dists)
+        val covMat = kernelApply(koma.sqrt(dists))
 
         when (nu) {
             ABSOLUTE_EXPONENTIAL -> {
@@ -50,8 +50,8 @@ class Matern constructor(private val nu: MaternType = TWICE_DIFFERENTIAL, bound:
             TWICE_DIFFERENTIAL -> {
                 for (i in 0 until n) {
                     for (j in 0 until n) {
-                        val tmp = 5 * dists[i, j]
-                        val g = 5.0 / 3 * dists[i, j] * sqrt(tmp + 1) * exp(-tmp)
+                        val tmp = sqrt(5 * dists[i, j])
+                        val g = 5.0 / 3 * dists[i, j] * (tmp + 1) * exp(-tmp)
                         grads[i, j, 0] = g
                     }
                 }
@@ -62,7 +62,7 @@ class Matern constructor(private val nu: MaternType = TWICE_DIFFERENTIAL, bound:
     }
 
     override fun getCovarianceMatrix(data: Matrix<Double>, theta: DoubleArray): Matrix<Double> {
-        val dists = getDists(data, data, theta)
+        val dists = koma.sqrt(getDists(data, data, theta))
         return kernelApply(dists)
     }
 

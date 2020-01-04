@@ -17,7 +17,7 @@ import thuan.handsome.lightgbm.Booster
  */
 class OptimizerTest {
     private companion object {
-        fun ucb(x: DoubleArray, kappa: Double = 2.576): Double {
+        fun ucb(x: DoubleArray, kappa: Double = 1.4142135623730951): Double {
             val mean = x.sum() / x.size
             val std = sqrt(
                 // variance

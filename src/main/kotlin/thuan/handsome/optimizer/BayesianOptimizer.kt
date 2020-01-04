@@ -35,7 +35,7 @@ class BayesianOptimizer(val kernel: Kernel = Matern()) : Optimizer {
             return bestX
         }
 
-        fun ucb(x: DoubleArray, gp: GPRegressor, kappa: Double = 2.576): Double {
+        fun ucb(x: DoubleArray, gp: GPRegressor, kappa: Double = 1.4142135623730951): Double {
             val (mean, variance) = gp.predict(x)
             val std = sqrt(variance)
             return mean + kappa * std
