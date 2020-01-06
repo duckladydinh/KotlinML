@@ -9,11 +9,6 @@ import thuan.handsome.core.xspace.Bound
 import thuan.handsome.gp.kernel.MaternType.*
 
 class Matern constructor(private val nu: MaternType = TWICE_DIFFERENTIAL, bound: Bound = Bound(1e-5, 1e5)) : RBF(bound) {
-    companion object {
-        val ROOT_THREE = sqrt(3.0)
-        val ROOT_FIVE = sqrt(5.0)
-    }
-
     override fun getCovarianceMatrix(dataX: Matrix<Double>, dataY: Matrix<Double>, theta: DoubleArray): Matrix<Double> {
         val dists = koma.sqrt(getDists(dataX, dataY, theta))
         return kernelApply(dists)
@@ -75,12 +70,12 @@ class Matern constructor(private val nu: MaternType = TWICE_DIFFERENTIAL, bound:
         return when (nu) {
             ABSOLUTE_EXPONENTIAL -> { return koma.exp(-dists) }
             ONCE_DIFFERENTIAL -> {
-                val tmp = dists.times(ROOT_THREE)
+                val tmp = dists.times(sqrt(3.0))
                 val covMat = tmp.plus(1.0).emul(koma.exp(-tmp))
                 covMat
             }
             TWICE_DIFFERENTIAL -> {
-                val tmp = dists.times(ROOT_FIVE)
+                val tmp = dists.times(sqrt(5.0))
                 val covMat = (tmp.plus(1) + tmp.epow(2).div(3.0)).emul(koma.exp(-tmp))
                 covMat
             }
