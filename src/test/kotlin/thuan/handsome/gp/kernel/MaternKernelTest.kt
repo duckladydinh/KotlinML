@@ -6,7 +6,7 @@ import koma.mat
 import org.junit.Test
 import thuan.handsome.utils.assertNearEquals
 
-class KernelTest {
+class MaternKernelTest {
     companion object {
         val data = mat[
                 0.0, 1.0, 3.0, 2.0 end
