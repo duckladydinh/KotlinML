@@ -1,24 +1,26 @@
 package thuan.handsome.gp.kernel
 
-import koma.create
+import koma.end
 import koma.extensions.toDoubleArray
+import koma.mat
 import org.junit.Test
 import thuan.handsome.utils.assertNearEquals
 
 class KernelTest {
+    companion object {
+        val data = mat[
+                0.0, 1.0, 3.0, 2.0 end
+                1.0, 4.0, 4.0, 5.0 end
+                5.0, 2.0, 1.0, 4.0 end
+                6.0, 2.0, 1.0, 4.0 end
+                5.0, 2.0, 3.0, 9.0 end
+                5.0, 5.0, 1.0, 3.0
+        ]
+    }
+
     @Test
     fun testMaternTwiceDifferential() {
         val kernel = Matern(nu = MaternType.TWICE_DIFFERENTIAL)
-        val data = create(
-            arrayOf(
-                doubleArrayOf(0.0, 1.0, 3.0, 2.0),
-                doubleArrayOf(1.0, 4.0, 4.0, 5.0),
-                doubleArrayOf(5.0, 2.0, 1.0, 4.0),
-                doubleArrayOf(6.0, 2.0, 1.0, 4.0),
-                doubleArrayOf(5.0, 2.0, 3.0, 9.0),
-                doubleArrayOf(5.0, 5.0, 1.0, 3.0)
-            )
-        )
 
         assertNearEquals(7.129525070484171, kernel.getCovarianceMatrix(data, theta = doubleArrayOf(0.0)).elementSum())
         assertNearEquals(
@@ -36,16 +38,6 @@ class KernelTest {
     @Test
     fun testMaternOnceDifferential() {
         val kernel = Matern(nu = MaternType.ONCE_DIFFERENTIAL)
-        val data = create(
-            arrayOf(
-                doubleArrayOf(0.0, 1.0, 3.0, 2.0),
-                doubleArrayOf(1.0, 4.0, 4.0, 5.0),
-                doubleArrayOf(5.0, 2.0, 1.0, 4.0),
-                doubleArrayOf(6.0, 2.0, 1.0, 4.0),
-                doubleArrayOf(5.0, 2.0, 3.0, 9.0),
-                doubleArrayOf(5.0, 5.0, 1.0, 3.0)
-            )
-        )
 
         assertNearEquals(7.080798824900314, kernel.getCovarianceMatrix(data, theta = doubleArrayOf(0.0)).elementSum())
         assertNearEquals(
@@ -63,16 +55,6 @@ class KernelTest {
     @Test
     fun testMaternAbsoluteExponential() {
         val kernel = Matern(nu = MaternType.ABSOLUTE_EXPONENTIAL)
-        val data = create(
-            arrayOf(
-                doubleArrayOf(0.0, 1.0, 3.0, 2.0),
-                doubleArrayOf(1.0, 4.0, 4.0, 5.0),
-                doubleArrayOf(5.0, 2.0, 1.0, 4.0),
-                doubleArrayOf(6.0, 2.0, 1.0, 4.0),
-                doubleArrayOf(5.0, 2.0, 3.0, 9.0),
-                doubleArrayOf(5.0, 5.0, 1.0, 3.0)
-            )
-        )
 
         assertNearEquals(6.971260850937075, kernel.getCovarianceMatrix(data, theta = doubleArrayOf(0.0)).elementSum())
         assertNearEquals(
