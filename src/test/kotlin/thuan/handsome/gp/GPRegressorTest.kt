@@ -13,7 +13,7 @@ class GPRegressorTest {
         val data = create(doubleArrayOf(1.0, 3.0, 5.0, 6.0, 7.0, 8.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0)).reshape(6, 2)
         val y = create(doubleArrayOf(0.84147098, -4.79462137, 4.59890619, -1.67649299, -3.02720998, 1.81859485)).T
         val gp = GPRegressor(data, y)
-        val (likelihood, grads) = gp.evaluate(doubleArrayOf(0.001), true)
+        val (likelihood, grads) = gp.logLikelihood(doubleArrayOf(0.001), true)
         assertEquals(-34.43188191091343, likelihood)
         assertEquals(-3.125607808495565, grads[0])
     }
@@ -24,7 +24,7 @@ class GPRegressorTest {
         val y = create(doubleArrayOf(0.84147098, -4.79462137, 4.59890619, -1.67649299, -3.02720998, 1.81859485)).T
         val gp = GPRegressor.fit(data, y, maxiter = 3)
 
-        val res = gp.evaluate(gp.bestTheta, computeGradient = true)
+        val res = gp.logLikelihood(gp.bestTheta, computeGradient = true)
         LOGGER.info { res }
 
         val (likelihood, _) = res
@@ -44,7 +44,7 @@ class GPRegressorTest {
                 0.01108910280217, 0.39852920004714, 14.55355618319405, 392.4984859545136, 0.31098375779818, 6.95207456174469 ]
         val y = mat[ 0.65188470066519, 0.94640122511485, 0.9578313253012, 0.94060995184591, 0.61241970021413 ].T
         val gp = GPRegressor.fit(data, y, 50)
-        val res = gp.evaluate(gp.bestTheta, computeGradient = true)
+        val res = gp.logLikelihood(gp.bestTheta, computeGradient = true)
         LOGGER.info { res }
     }
 
@@ -63,7 +63,7 @@ class GPRegressorTest {
         val y = mat[0.6321138211382115, 0.8245125348189416, 0.6103092783505155, 0.9486823855755894, 0.9370629370629371, 0.8968363136176066, 0.9532163742690059].T
         val gp = GPRegressor.fit(data, y, 1)
         gp.bestTheta = theta
-        LOGGER.info { gp.evaluate(gp.bestTheta, true) }
+        LOGGER.info { gp.logLikelihood(gp.bestTheta, true) }
         val res = gp.predict(x)
         LOGGER.info { res }
     }

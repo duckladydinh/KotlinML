@@ -23,9 +23,9 @@ class GPRegressor internal constructor(
 ) {
     var bestTheta = DoubleArray(kernel.getDim())
 
-    private lateinit var covMatCholesky: Matrix<Double>
-    private lateinit var covMatInv: Matrix<Double>
-    private lateinit var covMat: Matrix<Double>
+    private lateinit var covCholesky: Matrix<Double>
+    private lateinit var covInv: Matrix<Double>
+    private lateinit var cov: Matrix<Double>
     // alpha is a vertical vector where covMat * alpha = y
     private lateinit var alpha: Matrix<Double>
 
@@ -48,7 +48,7 @@ class GPRegressor internal constructor(
 
             val gp = GPRegressor(data, y, kernel, noise, normalizeY)
             val func = DifferentialFunction {
-                gp.evaluate(it, true)
+                gp.logLikelihood(it, true)
             }
 
             var bestLogLikelihood = Double.NEGATIVE_INFINITY
@@ -70,7 +70,7 @@ class GPRegressor internal constructor(
             gp.bestTheta = bestTheta
             // we will not updated theta inside 'evaluate' to ensure
             // that bestTheta is really the best theta ever
-            gp.evaluate(theta = bestTheta, computeGradient = true)
+            gp.logLikelihood(theta = bestTheta, computeGradient = true)
             return gp
         }
     }
@@ -96,7 +96,7 @@ class GPRegressor internal constructor(
         val predYMean = this.yMean + dot(predK, this.alpha)
 
         // horizontal vector predK * K
-        val predKK = predK * this.covMatInv
+        val predKK = predK * this.covInv
         predYVar -= dot(predKK, predK)
         predYVar = max(0.0, predYVar)
 
@@ -109,8 +109,7 @@ class GPRegressor internal constructor(
      *
      * likelihood = P(y | X, theta)
      */
-
-    fun evaluate(theta: DoubleArray, computeGradient: Boolean = false): DifferentialEvaluation {
+    fun logLikelihood(theta: DoubleArray, computeGradient: Boolean = false): DifferentialEvaluation {
         require(theta.size == kernel.getDim())
 
         val n = this.data.numRows()
@@ -126,31 +125,36 @@ class GPRegressor internal constructor(
             }
         }
 
-        this.covMat = this.kernel.getCovarianceMatrix(this.data, theta) + eye(n) * noise
-        this.covMatInv = this.covMat.inv()
+        this.cov = this.kernel.getCovarianceMatrix(this.data, theta) + eye(n) * noise
+        this.covInv = this.cov.inv()
 
-        this.alpha = covMatInv * this.y
+        this.alpha = this.covInv * this.y
         try {
-            this.covMatCholesky = covMat.chol()
+            this.covCholesky = cov.chol()
         } catch (e: IllegalStateException) {
             LOGGER.warn { e }
             return DifferentialEvaluation(this.likelihood, this.likelihoodGrads)
         }
 
-        this.likelihood = 0.0
-
-        this.likelihood -= covMatCholesky.diag().map { ln(it) }.elementSum()
-        this.likelihood -= 0.5 * dot(this.y, alpha)
-        this.likelihood -= 0.5 * n * ln(2 * PI)
+        // 1. Full formula:
+        // log[p(y|X, theta)] =
+        //      - 0.5 * log(K_theta + var * I)
+        //      - 0.5 * (y - m_theta).T * (K_theta + var * I) * (y - m_theta)
+        //      - 0.5 * n * log(2 * PI)
+        // 2. Dot product is used since we know they are vectors and we want
+        // the final value to be a scalar. Alternatively, we could write:
+        //      (this.y.T * alpha) [0, 0]
+        this.likelihood =
+            - covCholesky.diag().map { ln(it) }.elementSum() - 0.5 * dot(this.y, this.alpha) - 0.5 * n * ln(2 * PI)
 
         if (computeGradient) {
-            val covMatGrads = this.kernel.getCovarianceMatrixGradient(this.data, theta)
-            val tmp = (alpha * alpha.T) - this.covMatInv * eye(n)
+            val covGrads = this.kernel.getCovarianceMatrixGradient(this.data, theta)
+            val tmp = (alpha * alpha.T) - this.covInv * eye(n)
 
             for (i in 0 until n) {
                 for (j in 0 until n) {
                     for (k in 0 until m) {
-                        this.likelihoodGrads[k] += tmp[i, j] * covMatGrads[i, j, k] / 2.0
+                        this.likelihoodGrads[k] += tmp[i, j] * covGrads[i, j, k] / 2.0
                     }
                 }
             }

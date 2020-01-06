@@ -20,8 +20,6 @@ class KernelTest {
             )
         )
 
-        val n = data.numRows()
-
         assertNearEquals(7.129525070484171, kernel.getCovarianceMatrix(data, theta = doubleArrayOf(0.0)).elementSum())
         assertNearEquals(
             1.6359646151176421,
@@ -49,8 +47,6 @@ class KernelTest {
             )
         )
 
-        val n = data.numRows()
-
         assertNearEquals(7.080798824900314, kernel.getCovarianceMatrix(data, theta = doubleArrayOf(0.0)).elementSum())
         assertNearEquals(
             1.6572452375427567,
@@ -77,8 +73,6 @@ class KernelTest {
                 doubleArrayOf(5.0, 5.0, 1.0, 3.0)
             )
         )
-
-        val n = data.numRows()
 
         assertNearEquals(6.971260850937075, kernel.getCovarianceMatrix(data, theta = doubleArrayOf(0.0)).elementSum())
         assertNearEquals(
