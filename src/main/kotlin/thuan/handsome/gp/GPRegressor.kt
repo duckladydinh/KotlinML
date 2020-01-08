@@ -7,7 +7,6 @@ import kotlin.math.PI
 import kotlin.math.ln
 import thuan.handsome.core.function.DifferentialEvaluation
 import thuan.handsome.core.function.DifferentialFunction
-import thuan.handsome.core.xspace.XSpace
 import thuan.handsome.gp.kernel.Kernel
 import thuan.handsome.gp.kernel.RBF
 import thuan.handsome.optimizer.numeric.NumericOptimizer
@@ -21,12 +20,12 @@ class GPRegressor internal constructor(
 ) {
     var bestTheta = DoubleArray(kernel.getDim())
 
-    private lateinit var covInv: Matrix<Double>
-    // alpha is a vertical vector where covMat * alpha = y
-    private lateinit var alpha: Matrix<Double>
+    private lateinit var covInv: Matrix<Double> // inverse of the covariance matrix from data, saved for prediction
+    private lateinit var alpha: Matrix<Double> // alpha is a vertical vector where covMat * alpha = y
 
-    private var yMean = if (normalizeY) y.mean() else 0.0
-    private var xSpace: XSpace = kernel.getThetaBounds()
+    private val yMean = if (normalizeY) y.mean() else 0.0
+    private val xSpace = kernel.getThetaBounds()
+
     private var isPosterior = false
 
     companion object {
@@ -120,11 +119,11 @@ class GPRegressor internal constructor(
         val cov = this.kernel.getCovarianceMatrix(this.data, theta) + eye(n) * noise
 
         this.covInv = cov.inv()
-        this.alpha = this.covInv * this.y
+        this.alpha = this.covInv * (this.y - this.yMean)
 
         // Full formula: log[p(y|X, theta)] = - 0.5 * log(K_theta + var * I) - 0.5 * (y - m_theta).T * (K_theta + var * I) * (y - m_theta) - 0.5 * n * log(2 * PI)
         // Dot product is used since we know they are vectors and we want the final value to be a scalar. Alternatively, we could write: (this.y.T * alpha) [0, 0]
-        val likelihood = -0.5 * (ln(cov.det()) + dot(this.y, this.alpha) + n * ln(2 * PI))
+        val likelihood = -0.5 * (ln(cov.det()) + dot(this.y - this.yMean, this.alpha) + n * ln(2 * PI))
 
         if (computeGradient) {
             // Full formula: grad[i] = 0.5 * tr( (alpha * alpha.T - K.inv()) * kernel_gradient_for grad[i])
