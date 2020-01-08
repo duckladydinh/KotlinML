@@ -2,13 +2,11 @@ package thuan.handsome.gp
 
 import koma.*
 import koma.extensions.get
-import koma.extensions.map
 import koma.matrix.Matrix
 import kotlin.math.PI
 import kotlin.math.ln
 import thuan.handsome.core.function.DifferentialEvaluation
 import thuan.handsome.core.function.DifferentialFunction
-import thuan.handsome.core.utils.LOGGER
 import thuan.handsome.core.xspace.XSpace
 import thuan.handsome.gp.kernel.Kernel
 import thuan.handsome.gp.kernel.RBF
@@ -23,17 +21,13 @@ class GPRegressor internal constructor(
 ) {
     var bestTheta = DoubleArray(kernel.getDim())
 
-    private lateinit var covCholesky: Matrix<Double>
     private lateinit var covInv: Matrix<Double>
-    private lateinit var cov: Matrix<Double>
     // alpha is a vertical vector where covMat * alpha = y
     private lateinit var alpha: Matrix<Double>
 
-    private var likelihoodGrads = DoubleArray(kernel.getDim())
     private var yMean = if (normalizeY) y.mean() else 0.0
     private var xSpace: XSpace = kernel.getThetaBounds()
     private var isPosterior = false
-    private var likelihood = 0.0
 
     companion object {
         fun fit(
@@ -115,26 +109,18 @@ class GPRegressor internal constructor(
         val n = this.data.numRows()
         val m = kernel.getDim()
 
-        this.likelihood = Double.NEGATIVE_INFINITY
-        for (i in 0 until m) {
-            this.likelihoodGrads[i] = 0.0
-        }
+        val likelihoodGrads = DoubleArray(m) { 0.0 }
+
         for (i in 0 until m) {
             if (!xSpace.validate(i, theta[i])) {
-                return DifferentialEvaluation(this.likelihood, this.likelihoodGrads)
+                return DifferentialEvaluation(Double.NEGATIVE_INFINITY, likelihoodGrads)
             }
         }
 
-        this.cov = this.kernel.getCovarianceMatrix(this.data, theta) + eye(n) * noise
-        this.covInv = this.cov.inv()
+        val cov = this.kernel.getCovarianceMatrix(this.data, theta) + eye(n) * noise
 
+        this.covInv = cov.inv()
         this.alpha = this.covInv * this.y
-        try {
-            this.covCholesky = cov.chol()
-        } catch (e: IllegalStateException) {
-            LOGGER.warn { e }
-            return DifferentialEvaluation(this.likelihood, this.likelihoodGrads)
-        }
 
         // 1. Full formula:
         // log[p(y|X, theta)] =
@@ -144,8 +130,7 @@ class GPRegressor internal constructor(
         // 2. Dot product is used since we know they are vectors and we want
         // the final value to be a scalar. Alternatively, we could write:
         //      (this.y.T * alpha) [0, 0]
-        this.likelihood =
-            -covCholesky.diag().map { ln(it) }.elementSum() - 0.5 * dot(this.y, this.alpha) - 0.5 * n * ln(2 * PI)
+        val likelihood = -0.5 * ln(cov.det()) - 0.5 * dot(this.y, this.alpha) - 0.5 * n * ln(2 * PI)
 
         if (computeGradient) {
             // Full formula: grad[i] = 0.5 * tr( (alpha * alpha.T - K.inv()) * kernel_gradient_for grad[i])
@@ -156,7 +141,7 @@ class GPRegressor internal constructor(
                 for (j in 0 until n) {
                     for (k in 0 until m) {
                         // this is to avoid matrix multiplication since only trace is needed (tmp has been transposed)
-                        this.likelihoodGrads[k] += tmp[i, j] * covGrads[i, j, k] / 2.0
+                        likelihoodGrads[k] += tmp[i, j] * covGrads[i, j, k] / 2.0
                     }
                 }
             }
@@ -164,9 +149,6 @@ class GPRegressor internal constructor(
 
         this.isPosterior = true
 
-        return DifferentialEvaluation(
-            this.likelihood,
-            this.likelihoodGrads
-        )
+        return DifferentialEvaluation(likelihood, likelihoodGrads)
     }
 }
