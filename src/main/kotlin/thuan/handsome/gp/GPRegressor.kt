@@ -145,15 +145,17 @@ class GPRegressor internal constructor(
         // the final value to be a scalar. Alternatively, we could write:
         //      (this.y.T * alpha) [0, 0]
         this.likelihood =
-            - covCholesky.diag().map { ln(it) }.elementSum() - 0.5 * dot(this.y, this.alpha) - 0.5 * n * ln(2 * PI)
+            -covCholesky.diag().map { ln(it) }.elementSum() - 0.5 * dot(this.y, this.alpha) - 0.5 * n * ln(2 * PI)
 
         if (computeGradient) {
+            // Full formula: grad[i] = 0.5 * tr( (alpha * alpha.T - K.inv()) * kernel_gradient_for grad[i])
             val covGrads = this.kernel.getCovarianceMatrixGradient(this.data, theta)
-            val tmp = (alpha * alpha.T) - this.covInv * eye(n)
+            val tmp = ((alpha * alpha.T) - this.covInv).T
 
             for (i in 0 until n) {
                 for (j in 0 until n) {
                     for (k in 0 until m) {
+                        // this is to avoid matrix multiplication since only trace is needed (tmp has been transposed)
                         this.likelihoodGrads[k] += tmp[i, j] * covGrads[i, j, k] / 2.0
                     }
                 }
