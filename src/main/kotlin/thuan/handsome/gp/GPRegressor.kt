@@ -122,15 +122,9 @@ class GPRegressor internal constructor(
         this.covInv = cov.inv()
         this.alpha = this.covInv * this.y
 
-        // 1. Full formula:
-        // log[p(y|X, theta)] =
-        //      - 0.5 * log(K_theta + var * I)
-        //      - 0.5 * (y - m_theta).T * (K_theta + var * I) * (y - m_theta)
-        //      - 0.5 * n * log(2 * PI)
-        // 2. Dot product is used since we know they are vectors and we want
-        // the final value to be a scalar. Alternatively, we could write:
-        //      (this.y.T * alpha) [0, 0]
-        val likelihood = -0.5 * ln(cov.det()) - 0.5 * dot(this.y, this.alpha) - 0.5 * n * ln(2 * PI)
+        // Full formula: log[p(y|X, theta)] = - 0.5 * log(K_theta + var * I) - 0.5 * (y - m_theta).T * (K_theta + var * I) * (y - m_theta) - 0.5 * n * log(2 * PI)
+        // Dot product is used since we know they are vectors and we want the final value to be a scalar. Alternatively, we could write: (this.y.T * alpha) [0, 0]
+        val likelihood = -0.5 * (ln(cov.det()) + dot(this.y, this.alpha) + n * ln(2 * PI))
 
         if (computeGradient) {
             // Full formula: grad[i] = 0.5 * tr( (alpha * alpha.T - K.inv()) * kernel_gradient_for grad[i])
