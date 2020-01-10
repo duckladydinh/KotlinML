@@ -57,17 +57,17 @@ dist/thuan: build/lbfgsb_wrapper.o build/solver.o build/blas.o build/linpack.o b
 build/lbfgsb_wrapper.o: lbfgsb_wrapper.c lbfgsb_wrapper.h
 	$(CC) $(CFLAGS) -c lbfgsb_wrapper.c -o build/lbfgsb_wrapper.o
 
-build/solver.o: fortran_src/solver.f
-	$(FC) $(FFLAGS) -c fortran_src/solver.f -o build/solver.o
+build/solver.o: fortran_src/solver.f90
+	$(FC) $(FFLAGS) -c fortran_src/solver.f90 -o build/solver.o
 
-build/blas.o: fortran_src/blas.f
-	$(FC) $(FFLAGS) -c fortran_src/blas.f -o build/blas.o
+build/blas.o: fortran_src/blas.f90
+	$(FC) $(FFLAGS) -c fortran_src/blas.f90 -o build/blas.o
 
-build/linpack.o: fortran_src/linpack.f
-	$(FC) $(FFLAGS) -c fortran_src/linpack.f -o build/linpack.o
+build/linpack.o: fortran_src/linpack.f90
+	$(FC) $(FFLAGS) -c fortran_src/linpack.f90 -o build/linpack.o
 
-build/timer.o: fortran_src/timer.f
-	$(FC) $(FFLAGS) -c fortran_src/timer.f -o build/timer.o
+build/timer.o: fortran_src/timer.f90
+	$(FC) $(FFLAGS) -c fortran_src/timer.f90 -o build/timer.o
 	
 clean:
 	rm -rf build dist lbfgsblib_linux.jar lbfgsb_wrapper_wrap.c
