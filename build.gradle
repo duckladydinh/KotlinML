@@ -39,11 +39,17 @@ dependencies {
     implementation name: "lightgbmlib_linux"
     implementation name: "lbfgsblib_linux" // sudo apt install libgfortran-9-dev for this
 
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+    testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
 }
 
 group = 'thuan.handsome'
 version = '1.0-SNAPSHOT'
+
+test {
+    useJUnitPlatform()
+}
 
 //noinspection GrUnresolvedAccess
 [clean, cleanTest].each {
@@ -54,8 +60,8 @@ version = '1.0-SNAPSHOT'
     }
 }
 
-compileKotlin {
 
+compileKotlin {
     //noinspection GrUnresolvedAccess
     kotlinOptions {
         jvmTarget = "11"

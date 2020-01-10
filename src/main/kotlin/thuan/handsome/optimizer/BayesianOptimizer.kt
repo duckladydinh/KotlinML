@@ -31,7 +31,7 @@ class BayesianOptimizer(val kernel: Kernel = Matern()) : Optimizer {
                 }
             }
 
-            LOGGER.info { "Next x's UCP Score = $bestValue" }
+            LOGGER.debug { "Next x's UCP Score = $bestValue" }
             return bestX
         }
 
@@ -64,8 +64,8 @@ class BayesianOptimizer(val kernel: Kernel = Matern()) : Optimizer {
         val data = mutableListOf(bestX)
         val y = mutableListOf(bestY)
 
-        LOGGER.info { "WARMING UP" }
-        LOGGER.info { "Iteration %3d | y = %.6f | bestY = %.6f.".format(1, bestY, bestY) }
+        LOGGER.debug { "WARMING UP" }
+        LOGGER.debug { "Iteration %3d | y = %.6f | bestY = %.6f.".format(1, bestY, bestY) }
 
         // warm-up
         for (iter in 2..5) {
@@ -78,10 +78,10 @@ class BayesianOptimizer(val kernel: Kernel = Matern()) : Optimizer {
                 bestY = res
                 bestX = x
             }
-            LOGGER.info { "Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, res, bestY) }
+            LOGGER.debug { "Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, res, bestY) }
         }
 
-        LOGGER.info { "START TRAINING" }
+        LOGGER.debug { "START TRAINING" }
         for (iter in 6..maxiter) {
             val dataMat = create(data.toTypedArray())
             val yMat = create(y.toDoubleArray()).T
@@ -101,7 +101,7 @@ class BayesianOptimizer(val kernel: Kernel = Matern()) : Optimizer {
 
             data.add(x)
             y.add(res)
-            LOGGER.info { "Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, res, bestY) }
+            LOGGER.debug { "Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, res, bestY) }
         }
 
         return XYPoint(bestX, bestY)

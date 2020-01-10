@@ -2,7 +2,7 @@ package thuan.handsome.core.cv
 
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class CVTest {
     @Test

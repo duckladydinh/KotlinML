@@ -4,7 +4,7 @@ import koma.*
 import koma.extensions.reshape
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import thuan.handsome.core.utils.LOGGER
 
 class GPRegressorTest {
@@ -64,6 +64,7 @@ class GPRegressorTest {
         val gp = GPRegressor.fit(data, y, 1)
         gp.bestTheta = theta
         LOGGER.info { gp.logLikelihood(gp.bestTheta, true) }
+
         val res = gp.predict(x)
         LOGGER.info { res }
     }

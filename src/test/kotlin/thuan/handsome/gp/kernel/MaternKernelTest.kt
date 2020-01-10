@@ -3,7 +3,7 @@ package thuan.handsome.gp.kernel
 import koma.end
 import koma.extensions.toDoubleArray
 import koma.mat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import thuan.handsome.utils.assertNearEquals
 
 class MaternKernelTest {

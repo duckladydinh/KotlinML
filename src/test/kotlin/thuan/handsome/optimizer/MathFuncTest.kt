@@ -1,11 +1,14 @@
 package thuan.handsome.optimizer
 
 import kotlin.math.pow
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
+import thuan.handsome.core.utils.LOGGER
 import thuan.handsome.core.xspace.UniformXSpace
 import thuan.handsome.gp.kernel.*
 
-class NaiveOptimizerTest {
+class MathFuncTest {
     companion object {
         fun testNaiveOptimizer(optimizer: Optimizer) {
             val xSpace = UniformXSpace()
@@ -21,28 +24,20 @@ class NaiveOptimizerTest {
                 return -((x - 1).pow(2) + (y - 2).pow(2) + (z - 3).pow(2) + (w - 4).pow(2))
             }
             val (x, y) = optimizer.argmax(func, xSpace = xSpace, maxiter = 30)
-            println(x.map { "${it.key} : ${it.value}" }.joinToString(" "))
-            println(y)
+            LOGGER.info { "At { ${(x.map { "${it.key} : ${it.value}" }.joinToString(" | "))} }" }
+            LOGGER.info { "y = $y" }
         }
     }
+
     @Test
     fun naiveFunctionTestWithRBF() {
         testNaiveOptimizer(BayesianOptimizer(kernel = RBF()))
     }
 
-    @Test
-    fun naiveFunctionTestWithMatern25() {
-        testNaiveOptimizer(BayesianOptimizer(kernel = Matern(nu = MaternType.TWICE_DIFFERENTIAL)))
-    }
-
-    @Test
-    fun naiveFunctionTestWithMatern15() {
-        testNaiveOptimizer(BayesianOptimizer(kernel = Matern(nu = MaternType.ONCE_DIFFERENTIAL)))
-    }
-
-    @Test
-    fun naiveFunctionTestWithMatern05() {
-        testNaiveOptimizer(BayesianOptimizer(kernel = Matern(nu = MaternType.ABSOLUTE_EXPONENTIAL)))
+    @ParameterizedTest
+    @EnumSource(MaternType::class)
+    fun naiveFunctionTestWithMatern(maternType: MaternType) {
+        testNaiveOptimizer(BayesianOptimizer(kernel = Matern(nu = maternType)))
     }
 
     @Test
