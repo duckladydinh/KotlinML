@@ -1,8 +1,8 @@
 package thuan.handsome.core.utils
 
 import koma.extensions.set
-import koma.internal.default.generated.matrix.DefaultDoubleMatrix
 import koma.matrix.Matrix
+import koma.zeros
 import krangl.DataFrame
 import krangl.readCSV
 import org.apache.commons.csv.CSVFormat
@@ -17,7 +17,7 @@ fun getXY(csvMatrixPath: String, labelColumnIndex: Int): Pair<Matrix<Double>, Do
 }
 
 fun sliceByRows(data: Matrix<Double>, rowIndexes: Collection<Int>): Matrix<Double> {
-    val mat = DefaultDoubleMatrix(rows = rowIndexes.size, cols = data.numCols())
+    val mat = zeros(rowIndexes.size, data.numCols())
     for ((row, dataRow) in rowIndexes.withIndex()) {
         mat.setRow(row, data.getRow(dataRow))
     }
@@ -29,7 +29,7 @@ private fun getExternalResourcePath(resourcePath: String): String {
 }
 
 private fun getXY(df: DataFrame, labelIndex: Int): Pair<Matrix<Double>, DoubleArray> {
-    val data = DefaultDoubleMatrix(df.nrow, df.ncol - 1)
+    val data = zeros(df.nrow, df.ncol - 1)
     val label = DoubleArray(df.nrow)
 
     for ((rowIndex, row) in df.rows.withIndex()) {
