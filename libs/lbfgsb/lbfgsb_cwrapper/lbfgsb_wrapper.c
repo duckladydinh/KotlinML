@@ -11,8 +11,8 @@ extern void setulb_(int *n, int *m, double x[], double l[],
                     char csave[], int lsave[], int isave[],
                     double dsave[]);
 
-struct lbfgsb *create(int n, int m) {
-    struct lbfgsb *data = malloc(sizeof(struct lbfgsb));
+struct L_BFGS_B *create(int n, int m) {
+    struct L_BFGS_B *data = malloc(sizeof(struct L_BFGS_B));
     data->n = n;
     data->m = m;
     data->x = malloc(n * sizeof(double));
@@ -34,7 +34,7 @@ struct lbfgsb *create(int n, int m) {
     return data;
 }
 
-void close(struct lbfgsb *data) {
+void close(struct L_BFGS_B *data) {
     free(data->x);
     free(data->l);
     free(data->u);
@@ -45,14 +45,14 @@ void close(struct lbfgsb *data) {
     free(data);
 }
 
-void step(struct lbfgsb *data) {
+void step(struct L_BFGS_B *data) {
     setulb_(&(data->n), &(data->m), data->x, data->l, data->u, data->nbd,
             &(data->f), data->g, &(data->factr), &(data->pgtol),
             data->wa, data->iwa, data->task, &(data->iprint),
             data->csave, data->lsave, data->isave, data->dsave);
 }
 
-void set_task(struct lbfgsb *data, enum TaskType type) {
+void set_task(struct L_BFGS_B *data, enum TaskType type) {
     switch (type) {
         case LBFGSB_FG:
             set_task_str(data, "FG");
@@ -82,7 +82,7 @@ void set_task(struct lbfgsb *data, enum TaskType type) {
     }
 }
 
-enum TaskType get_task(struct lbfgsb *data) {
+enum TaskType get_task(struct L_BFGS_B *data) {
     if (is_task_str_equal(data, "FG")) return LBFGSB_FG;
     if (is_task_str_equal(data, "NEW_X")) return LBFGSB_NEW_X;
     if (is_task_str_equal(data, "CONV")) return LBFGSB_CONV;
@@ -93,14 +93,14 @@ enum TaskType get_task(struct lbfgsb *data) {
     else return LBFGSB_UNKNOWN;
 }
 
-void set_task_str(struct lbfgsb *data, char *c_str) {
+void set_task_str(struct L_BFGS_B *data, char *c_str) {
     int len = strlen(c_str);
     assert(len < LBFGSB_TASK_SIZE && "Exception: is_task_str_equal: String too long\n");
     memset(data->task, ' ', LBFGSB_TASK_SIZE);
     memcpy(data->task, c_str, len);
 }
 
-int is_task_str_equal(struct lbfgsb *data, char *c_str) {
+int is_task_str_equal(struct L_BFGS_B *data, char *c_str) {
     int len = strlen(c_str);
     assert(len < LBFGSB_TASK_SIZE && "Exception: is_task_str_equal: String too long\n");
     return memcmp(data->task, c_str, len) == 0;

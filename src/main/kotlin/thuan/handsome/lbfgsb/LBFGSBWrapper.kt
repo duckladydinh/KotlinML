@@ -6,7 +6,7 @@ import thuan.handsome.core.xspace.Bound
 import thuan.handsome.lbfgsb.jni.*
 
 class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrections: Int) {
-    private val data: lbfgsb = lbfgsb_wrapper.create(dimensions, numCorrections)
+    private val nativeRunner: L_BFGS_B = lbfgsb_wrapper.create(dimensions, numCorrections)
 
     companion object {
         init {
@@ -158,38 +158,38 @@ class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrecti
     }
 
     private fun step() {
-        lbfgsb_wrapper.step(data)
+        lbfgsb_wrapper.step(nativeRunner)
     }
 
     private fun getY(): Double {
-        return data.f
+        return nativeRunner.f
     }
 
     private fun setY(y: Double) {
-        data.f = y
+        nativeRunner.f = y
     }
 
     private fun getX(): DoubleArray {
-        return nativeArrayToJava(data.x, dimensions)
+        return nativeArrayToJava(nativeRunner.x, dimensions)
     }
 
     private fun setX(x: DoubleArray) {
-        javaArrayToNative(x, data.x)
+        javaArrayToNative(x, nativeRunner.x)
     }
 
     private fun getGrads(): DoubleArray {
-        return nativeArrayToJava(data.g, dimensions)
+        return nativeArrayToJava(nativeRunner.g, dimensions)
     }
 
     private fun setGrads(grads: DoubleArray) {
-        javaArrayToNative(grads, data.g)
+        javaArrayToNative(grads, nativeRunner.g)
     }
 
     private fun setBounds(bounds: Array<Bound>) {
         assert(dimensions == bounds.size)
-        val nbd = data.nbd
-        val l = data.l
-        val u = data.u
+        val nbd = nativeRunner.nbd
+        val l = nativeRunner.l
+        val u = nativeRunner.u
 
         for ((index, bound) in bounds.withIndex()) {
             lbfgsb_wrapper.intArray_setitem(nbd, index, getBoundCode(bound))
@@ -199,27 +199,27 @@ class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrecti
     }
 
     private fun setDebugLevel(debugLevel: Int) {
-        data.iprint = debugLevel
+        nativeRunner.iprint = debugLevel
     }
 
     private fun setFunctionFactor(value: Double) {
-        data.factr = value
+        nativeRunner.factr = value
     }
 
     private fun setMaxGradientNorm(value: Double) {
-        data.pgtol = value
+        nativeRunner.pgtol = value
     }
 
     private fun getTask(): TaskType {
-        return lbfgsb_wrapper.get_task(data)
+        return lbfgsb_wrapper.get_task(nativeRunner)
     }
 
     private fun setTask(type: TaskType) {
-        lbfgsb_wrapper.set_task(data, type)
+        lbfgsb_wrapper.set_task(nativeRunner, type)
     }
 
     private fun getState(): String {
-        return data.task.trim { it <= ' ' }
+        return nativeRunner.task.trim { it <= ' ' }
     }
 
     private fun stop() {
@@ -228,6 +228,6 @@ class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrecti
     }
 
     private fun close() {
-        lbfgsb_wrapper.close(data)
+        lbfgsb_wrapper.close(nativeRunner)
     }
 }

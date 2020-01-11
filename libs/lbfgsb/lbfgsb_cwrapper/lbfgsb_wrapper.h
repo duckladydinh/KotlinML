@@ -8,7 +8,7 @@ enum TaskType { LBFGSB_FG, LBFGSB_NEW_X, LBFGSB_CONV, LBFGSB_ABNO,
 
 // Data used by the algorithm. 
 // Check the original Fortran source code to see what each variable means.
-struct lbfgsb{
+struct L_BFGS_B {
 	int n; // variables no.
 	int m; // corrections no.
 	double* x; // point
@@ -43,23 +43,23 @@ struct lbfgsb{
 };
 
 // Create algorithm data with default values set where it is possible
-struct lbfgsb* create(int n, int m);
+struct L_BFGS_B* create(int n, int m);
 
 // Delete algorithm structure
-void close(struct lbfgsb* data);
+void close(struct L_BFGS_B* data);
 
-void step(struct lbfgsb* data);
+void step(struct L_BFGS_B* data);
 
-void set_task(struct lbfgsb* data, enum TaskType type);
+void set_task(struct L_BFGS_B* data, enum TaskType type);
 
-enum TaskType get_task(struct lbfgsb* data);
+enum TaskType get_task(struct L_BFGS_B* data);
 
 // Internal task manipulation function: 
 // Copies C-string (with '\0' at the end), to Fortran-string (padded with spaces)
-void set_task_str(struct lbfgsb* data, char* c_str);
+void set_task_str(struct L_BFGS_B* data, char* c_str);
 
 // Internal task manipulation function: 
 // @return true iff the task description is equal up to the length of c_str
-int is_task_str_equal(struct lbfgsb* data, char* c_str);
+int is_task_str_equal(struct L_BFGS_B* data, char* c_str);
 
 #endif
