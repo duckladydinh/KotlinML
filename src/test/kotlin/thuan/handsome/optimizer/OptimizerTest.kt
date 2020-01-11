@@ -15,10 +15,10 @@ import thuan.handsome.utils.getTestXSpace
 class OptimizerTest {
     private companion object {
         fun testOptimizer(optimizer: Optimizer, metric: (DoubleArray, DoubleArray) -> Double): Pair<Double, Double> {
-            val dataPrefix = "imblearn_abalone" // good
+            // val dataPrefix = "imblearn_abalone" // good
             // val dataPrefix = "imblearn_pen_digits"
             // val dataPrefix = "imblearn_car_eval_34"
-            // val dataPrefix = "imblearn_yeast_me2" // not bad, 0.4
+            val dataPrefix = "imblearn_yeast_me2" // not bad, 0.4
             // val dataPrefix = "imblearn_mammography" // good
             // val dataPrefix = "imblearn_wine_quality" // not bad
             // val dataPrefix = "gecco2018_water"

@@ -6,7 +6,7 @@ private val xSpace = UniformXSpace().apply {
     addConstantParams(
         mapOf(
             "objective" to "binary",
-            "is_unbalance" to false,
+            "is_unbalance" to true,
             "verbose" to -1
         )
     )
