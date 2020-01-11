@@ -228,6 +228,6 @@ class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrecti
     }
 
     private fun close() {
-        lbfgsb_wrapper.delete(data)
+        lbfgsb_wrapper.close(data)
     }
 }

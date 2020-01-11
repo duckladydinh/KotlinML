@@ -34,7 +34,7 @@ struct lbfgsb *create(int n, int m) {
     return data;
 }
 
-void delete(struct lbfgsb *data) {
+void close(struct lbfgsb *data) {
     free(data->x);
     free(data->l);
     free(data->u);

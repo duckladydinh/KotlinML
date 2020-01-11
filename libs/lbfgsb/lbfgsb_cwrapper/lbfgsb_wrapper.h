@@ -1,11 +1,6 @@
 #ifndef LBFGSB_WRAPPER
 #define LBFGSB_WRAPPER
 
-//@author: Mateusz Kobos
-//Wrapper inspired by L-BFGS-B C++ binding from 
-//"A MATLAB interface for L-BFGS-B" by Peter Carbonetto 
-//available on http://www.cs.ubc.ca/~pcarbo/lbfgsb-for-matlab.html .
-
 #define LBFGSB_TASK_SIZE 60
 
 enum TaskType { LBFGSB_FG, LBFGSB_NEW_X, LBFGSB_CONV, LBFGSB_ABNO,
@@ -51,7 +46,7 @@ struct lbfgsb{
 struct lbfgsb* create(int n, int m);
 
 // Delete algorithm structure
-void delete(struct lbfgsb* data);
+void close(struct lbfgsb* data);
 
 void step(struct lbfgsb* data);
 
