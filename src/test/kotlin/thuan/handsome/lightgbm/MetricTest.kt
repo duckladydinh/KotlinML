@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import thuan.handsome.core.metrics.f1score
 import thuan.handsome.core.utils.*
-import thuan.handsome.utils.getTestData
+import thuan.handsome.core.utils.getTestData
 import thuan.handsome.utils.getTestXSpace
 
 class MetricTest {
@@ -14,21 +14,28 @@ class MetricTest {
             kappa: Double,
             enableLog: Boolean = true
         ): Double {
-            // val dataPrefix = "gecco2018_water"
-            val dataPrefix = "imblearn_abalone" // good
-            // val dataPrefix = "imblearn_abalone_19"
-            // val dataPrefix = "imblearn_pen_digits"
-            // val dataPrefix = "imblearn_car_eval_34"
+            // val dataPrefix = "imblearn_abalone" // good
             // val dataPrefix = "imblearn_yeast_me2" // not bad, 0.4
             // val dataPrefix = "imblearn_mammography" // good
             // val dataPrefix = "imblearn_wine_quality" // not bad
-            // val dataPrefix = "imblearn_letter_img"
+            val dataPrefix = "imblearn_letter_img"
 
-            val (trainData, trainLabel) = getTestData(dataPrefix, isTest = false)
-            val (testData, testLabel) = getTestData(dataPrefix, isTest = true)
+            // val dataPrefix = "imblearn_abalone_19"
+            // val dataPrefix = "imblearn_pen_digits"
+            // val dataPrefix = "imblearn_car_eval_34" // not following rule
+            // val dataPrefix = "gecco2018_water"
+
+            val (trainData, trainLabel) = getTestData(
+                dataPrefix,
+                isTest = false
+            )
+            val (testData, testLabel) = getTestData(
+                dataPrefix,
+                isTest = true
+            )
             val xSpace = getTestXSpace()
 
-            val n = 100
+            val n = 50
             val xs = DoubleArray(n)
             val ys = DoubleArray(n)
 
@@ -71,21 +78,8 @@ class MetricTest {
     @Disabled
     fun testMetricF1ScoreCorrelation() {
         for (kappa in sequenceOf(
-            -2.5,
-            -2.0,
-            -1.5,
-            -1.0,
-            -0.75,
-            -0.5,
-            -0.25,
-            0.0,
-            0.25,
-            0.5,
-            0.75,
-            1.0,
-            1.5,
-            2.0,
-            2.5
+            -2.5, -2.0, -1.5, -1.0, -0.75, -0.5, -0.25,
+            0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5
         )) {
             var tot = 0.0
             for (i in 1..5) {

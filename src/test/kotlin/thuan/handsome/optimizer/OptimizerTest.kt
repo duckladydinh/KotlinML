@@ -3,9 +3,9 @@ package thuan.handsome.optimizer
 import org.junit.jupiter.api.Test
 import thuan.handsome.core.metrics.f1score
 import thuan.handsome.core.utils.LOGGER
+import thuan.handsome.core.utils.getTestData
 import thuan.handsome.core.utils.mean
 import thuan.handsome.lightgbm.Booster
-import thuan.handsome.utils.getTestData
 import thuan.handsome.utils.getTestXSpace
 
 /**
@@ -25,8 +25,14 @@ class OptimizerTest {
             // val dataPrefix = "letter_img"
             // val dataPrefix = "imblearn_abalone_19"
 
-            val (trainData, trainLabel) = getTestData(dataPrefix, isTest = false)
-            val (testData, testLabel) = getTestData(dataPrefix, isTest = true)
+            val (trainData, trainLabel) = getTestData(
+                dataPrefix,
+                isTest = false
+            )
+            val (testData, testLabel) = getTestData(
+                dataPrefix,
+                isTest = true
+            )
             val xSpace = getTestXSpace()
 
             val (params, _) = optimizer.argmax(

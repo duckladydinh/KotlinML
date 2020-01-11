@@ -4,7 +4,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import thuan.handsome.core.metrics.f1score
 import thuan.handsome.core.utils.LOGGER
-import thuan.handsome.utils.getTestData
+import thuan.handsome.core.utils.getTestData
 
 class ClassifierTest {
     companion object {
@@ -15,8 +15,14 @@ class ClassifierTest {
                 "verbose" to -1
             )
 
-            val (trainData, trainLabel) = getTestData(dataPrefix, isTest = false)
-            val (testData, testLabel) = getTestData(dataPrefix, isTest = true)
+            val (trainData, trainLabel) = getTestData(
+                dataPrefix,
+                isTest = false
+            )
+            val (testData, testLabel) = getTestData(
+                dataPrefix,
+                isTest = true
+            )
 
             var start = System.currentTimeMillis()
             val scores = Booster.cv(::f1score, params, trainData, trainLabel, 100, 5)
