@@ -6,7 +6,7 @@ import thuan.handsome.core.xspace.Bound
 import thuan.handsome.lbfgsb.jni.*
 
 class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrections: Int) {
-    private val data: lbfgsb = lbfgsb_wrapper.lbfgsb_create(dimensions, numCorrections)
+    private val data: lbfgsb = lbfgsb_wrapper.create(dimensions, numCorrections)
 
     companion object {
         init {
@@ -107,7 +107,7 @@ class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrecti
         maxIterations: Int,
         onIterationFinished: ((DoubleArray, Double, DoubleArray) -> Boolean)?
     ): Summary {
-        setTask(lbfgsb_task_type.LBFGSB_START)
+        setTask(TaskType.LBFGSB_START)
         var stopType = StopType.MAX_ITERATIONS
         var numEvals = 0
 
@@ -115,12 +115,12 @@ class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrecti
             step()
 
             val task = getTask()
-            assert(task != lbfgsb_task_type.LBFGSB_ERROR) {
+            assert(task != TaskType.LBFGSB_ERROR) {
                 "L-BFGS-B Error: ${getState()}"
             }
 
             when (task) {
-                lbfgsb_task_type.LBFGSB_FG -> {
+                TaskType.LBFGSB_FG -> {
                     numEvals += 1
                     val x = getX()
                     val (y, grads) = func.invoke(x)
@@ -128,7 +128,7 @@ class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrecti
                     setGrads(grads)
                 }
 
-                lbfgsb_task_type.LBFGSB_NEW_X -> {
+                TaskType.LBFGSB_NEW_X -> {
                     if (onIterationFinished != null) {
                         val isContinue = onIterationFinished(getX(), getY(), getGrads())
                         if (!isContinue) {
@@ -138,11 +138,11 @@ class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrecti
                     }
                 }
 
-                lbfgsb_task_type.LBFGSB_CONV -> {
+                TaskType.LBFGSB_CONV -> {
                     stopType = StopType.CONVERGENT
                 }
 
-                lbfgsb_task_type.LBFGSB_ABNO -> {
+                TaskType.LBFGSB_ABNO -> {
                     stopType = StopType.ABNORMAL
                 }
 
@@ -158,7 +158,7 @@ class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrecti
     }
 
     private fun step() {
-        lbfgsb_wrapper.lbfgsb_step(data)
+        lbfgsb_wrapper.step(data)
     }
 
     private fun getY(): Double {
@@ -210,12 +210,12 @@ class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrecti
         data.pgtol = value
     }
 
-    private fun getTask(): lbfgsb_task_type {
-        return lbfgsb_wrapper.lbfgsb_get_task(data)
+    private fun getTask(): TaskType {
+        return lbfgsb_wrapper.get_task(data)
     }
 
-    private fun setTask(type: lbfgsb_task_type) {
-        lbfgsb_wrapper.lbfgsb_set_task(data, type)
+    private fun setTask(type: TaskType) {
+        lbfgsb_wrapper.set_task(data, type)
     }
 
     private fun getState(): String {
@@ -223,11 +223,11 @@ class LBFGSBWrapper private constructor(private val dimensions: Int, numCorrecti
     }
 
     private fun stop() {
-        setTask(lbfgsb_task_type.LBFGSB_STOP)
+        setTask(TaskType.LBFGSB_STOP)
         step()
     }
 
     private fun close() {
-        lbfgsb_wrapper.lbfgsb_delete(data)
+        lbfgsb_wrapper.delete(data)
     }
 }

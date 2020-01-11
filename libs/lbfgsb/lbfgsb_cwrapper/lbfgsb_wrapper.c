@@ -11,7 +11,7 @@ extern void setulb_(int *n, int *m, double x[], double l[],
                     char csave[], int lsave[], int isave[],
                     double dsave[]);
 
-struct lbfgsb *lbfgsb_create(int n, int m) {
+struct lbfgsb *create(int n, int m) {
     struct lbfgsb *data = malloc(sizeof(struct lbfgsb));
     data->n = n;
     data->m = m;
@@ -34,7 +34,7 @@ struct lbfgsb *lbfgsb_create(int n, int m) {
     return data;
 }
 
-void lbfgsb_delete(struct lbfgsb *data) {
+void delete(struct lbfgsb *data) {
     free(data->x);
     free(data->l);
     free(data->u);
@@ -45,63 +45,63 @@ void lbfgsb_delete(struct lbfgsb *data) {
     free(data);
 }
 
-void lbfgsb_step(struct lbfgsb *data) {
+void step(struct lbfgsb *data) {
     setulb_(&(data->n), &(data->m), data->x, data->l, data->u, data->nbd,
             &(data->f), data->g, &(data->factr), &(data->pgtol),
             data->wa, data->iwa, data->task, &(data->iprint),
             data->csave, data->lsave, data->isave, data->dsave);
 }
 
-void lbfgsb_set_task(struct lbfgsb *data, enum lbfgsb_task_type type) {
+void set_task(struct lbfgsb *data, enum TaskType type) {
     switch (type) {
         case LBFGSB_FG:
-            lbfgsb_set_task_str(data, "FG");
+            set_task_str(data, "FG");
             break;
         case LBFGSB_NEW_X:
-            lbfgsb_set_task_str(data, "NEW_X");
+            set_task_str(data, "NEW_X");
             break;
         case LBFGSB_CONV:
-            lbfgsb_set_task_str(data, "CONV");
+            set_task_str(data, "CONV");
             break;
         case LBFGSB_ABNO:
-            lbfgsb_set_task_str(data, "ABNO");
+            set_task_str(data, "ABNO");
             break;
         case LBFGSB_ERROR:
-            lbfgsb_set_task_str(data, "ERROR");
+            set_task_str(data, "ERROR");
             break;
         case LBFGSB_START:
-            lbfgsb_set_task_str(data, "START");
+            set_task_str(data, "START");
             break;
         case LBFGSB_STOP:
-            lbfgsb_set_task_str(data, "STOP");
+            set_task_str(data, "STOP");
             break;
         default: {
-            printf("Exception: lbfgsb_set_task: Unknown task type\n");
+            printf("Exception: set_task: Unknown task type\n");
             exit(1);
         }
     }
 }
 
-enum lbfgsb_task_type lbfgsb_get_task(struct lbfgsb *data) {
-    if (lbfgsb_is_task_str_equal(data, "FG")) return LBFGSB_FG;
-    if (lbfgsb_is_task_str_equal(data, "NEW_X")) return LBFGSB_NEW_X;
-    if (lbfgsb_is_task_str_equal(data, "CONV")) return LBFGSB_CONV;
-    if (lbfgsb_is_task_str_equal(data, "ABNO")) return LBFGSB_ABNO;
-    if (lbfgsb_is_task_str_equal(data, "ERROR")) return LBFGSB_ERROR;
-    if (lbfgsb_is_task_str_equal(data, "START")) return LBFGSB_START;
-    if (lbfgsb_is_task_str_equal(data, "STOP")) return LBFGSB_STOP;
+enum TaskType get_task(struct lbfgsb *data) {
+    if (is_task_str_equal(data, "FG")) return LBFGSB_FG;
+    if (is_task_str_equal(data, "NEW_X")) return LBFGSB_NEW_X;
+    if (is_task_str_equal(data, "CONV")) return LBFGSB_CONV;
+    if (is_task_str_equal(data, "ABNO")) return LBFGSB_ABNO;
+    if (is_task_str_equal(data, "ERROR")) return LBFGSB_ERROR;
+    if (is_task_str_equal(data, "START")) return LBFGSB_START;
+    if (is_task_str_equal(data, "STOP")) return LBFGSB_STOP;
     else return LBFGSB_UNKNOWN;
 }
 
-void lbfgsb_set_task_str(struct lbfgsb *data, char *c_str) {
+void set_task_str(struct lbfgsb *data, char *c_str) {
     int len = strlen(c_str);
-    assert(len < LBFGSB_TASK_SIZE && "Exception: lbfgsb_is_task_str_equal: String too long\n");
+    assert(len < LBFGSB_TASK_SIZE && "Exception: is_task_str_equal: String too long\n");
     memset(data->task, ' ', LBFGSB_TASK_SIZE);
     memcpy(data->task, c_str, len);
 }
 
-int lbfgsb_is_task_str_equal(struct lbfgsb *data, char *c_str) {
+int is_task_str_equal(struct lbfgsb *data, char *c_str) {
     int len = strlen(c_str);
-    assert(len < LBFGSB_TASK_SIZE && "Exception: lbfgsb_is_task_str_equal: String too long\n");
+    assert(len < LBFGSB_TASK_SIZE && "Exception: is_task_str_equal: String too long\n");
     return memcmp(data->task, c_str, len) == 0;
 }

@@ -8,7 +8,7 @@
 
 #define LBFGSB_TASK_SIZE 60
 
-enum lbfgsb_task_type { LBFGSB_FG, LBFGSB_NEW_X, LBFGSB_CONV, LBFGSB_ABNO, 
+enum TaskType { LBFGSB_FG, LBFGSB_NEW_X, LBFGSB_CONV, LBFGSB_ABNO,
 	LBFGSB_ERROR, LBFGSB_START, LBFGSB_STOP, LBFGSB_UNKNOWN };
 
 // Data used by the algorithm. 
@@ -48,23 +48,23 @@ struct lbfgsb{
 };
 
 // Create algorithm data with default values set where it is possible
-struct lbfgsb* lbfgsb_create(int n, int m);
+struct lbfgsb* create(int n, int m);
 
 // Delete algorithm structure
-void lbfgsb_delete(struct lbfgsb* data);
+void delete(struct lbfgsb* data);
 
-void lbfgsb_step(struct lbfgsb* data);
+void step(struct lbfgsb* data);
 
-void lbfgsb_set_task(struct lbfgsb* data, enum lbfgsb_task_type type);
+void set_task(struct lbfgsb* data, enum TaskType type);
 
-enum lbfgsb_task_type lbfgsb_get_task(struct lbfgsb* data);
+enum TaskType get_task(struct lbfgsb* data);
 
 // Internal task manipulation function: 
 // Copies C-string (with '\0' at the end), to Fortran-string (padded with spaces)
-void lbfgsb_set_task_str(struct lbfgsb* data, char* c_str);
+void set_task_str(struct lbfgsb* data, char* c_str);
 
 // Internal task manipulation function: 
 // @return true iff the task description is equal up to the length of c_str
-int lbfgsb_is_task_str_equal(struct lbfgsb* data, char* c_str);
+int is_task_str_equal(struct lbfgsb* data, char* c_str);
 
 #endif
