@@ -6,3 +6,9 @@ KotlinML is a new - and probably the first of its kind - framework for Machine L
 
 To welcome the great news that Kotlin for Data Science will be officially supported (December 2019), we aim to make something similar to sklearn and scipy for Kotlin. Will this last more than a school project? Or will it evolve into a work of the same scale of its counterpart in Python? Only time can answer, but I will do my best to keep this project alive!
 
+## Quick Task(s)
+1. Searching for a way to publish an artifact on JCenter or Maven Central.
+2. Adding more algorithms & documentation.
+
+## Contribution
+This project welcomes and needs your support to survive! Please help me make Kotlin for Data Science great again!
