@@ -26,32 +26,32 @@ class ClassifierTest {
 
             var start = System.currentTimeMillis()
             val scores = Booster.cv(::f1score, params, trainData, trainLabel, 100, 5)
-            LOGGER.info { "CV = ${scores.joinToString(" ")}" }
-            LOGGER.info { "CV Time: ${System.currentTimeMillis() - start}" }
+            LOGGER.atInfo().log("CV = ${scores.joinToString(" ")}")
+            LOGGER.atInfo().log("CV Time: ${System.currentTimeMillis() - start}")
 
             start = System.currentTimeMillis()
             val booster = Booster.fit(params, trainData, trainLabel, 100)
             val trainedPreds = booster.predict(trainData)
-            LOGGER.info { "Train Time: ${System.currentTimeMillis() - start}" }
+            LOGGER.atInfo().log("Train Time: ${System.currentTimeMillis() - start}")
 
             start = System.currentTimeMillis()
-            LOGGER.info {
+            LOGGER.atInfo().log(
                 "Train F1 = ${f1score(
                     trainedPreds,
                     trainLabel
                 )}"
-            }
-            LOGGER.info { "Train Prediction Time: ${System.currentTimeMillis() - start}" }
+            )
+            LOGGER.atInfo().log("Train Prediction Time: ${System.currentTimeMillis() - start}")
 
             start = System.currentTimeMillis()
             val testPreds = booster.predict(testData)
-            LOGGER.info {
+            LOGGER.atInfo().log(
                 "Test F1 = ${f1score(
                     testPreds,
                     testLabel
                 )}"
-            }
-            LOGGER.info { "Test Prediction Time: ${System.currentTimeMillis() - start}" }
+            )
+            LOGGER.atInfo().log("Test Prediction Time: ${System.currentTimeMillis() - start}")
 
             booster.close()
         }
@@ -60,15 +60,15 @@ class ClassifierTest {
     @ParameterizedTest(name = "Set #{index} [{arguments}]")
     @ValueSource(
         strings = [
-            "gecco2018_water",
-            "imblearn_abalone",
-            "imblearn_abalone_19",
-            "imblearn_car_eval_34",
-            "imblearn_letter_img",
-            "imblearn_mammography",
-            "imblearn_pen_digits",
-            "imblearn_wine_quality",
-            "imblearn_yeast_me2"
+            "data/gecco2018_water",
+            "data/imblearn_abalone",
+            "data/imblearn_abalone_19",
+            "data/imblearn_car_eval_34",
+            "data/imblearn_letter_img",
+            "data/imblearn_mammography",
+            "data/imblearn_pen_digits",
+            "data/imblearn_wine_quality",
+            "data/imblearn_yeast_me2"
         ]
     )
     fun testDefaultPerformance(dataPrefix: String) {

@@ -18,7 +18,7 @@ private val datasets = mutableMapOf<String, Pair<Matrix<Double>, DoubleArray>>()
 
 fun getTestData(name: String, isTest: Boolean = false): Pair<Matrix<Double>, DoubleArray> {
     val suffix = if (isTest) "test" else "train"
-    val path = (if (name.startsWith("/")) "" else "/data/") + "${name}_$suffix.csv"
+    val path = "${name}_$suffix.csv"
 
     if (!datasets.containsKey(path)) {
         val data = getXY(

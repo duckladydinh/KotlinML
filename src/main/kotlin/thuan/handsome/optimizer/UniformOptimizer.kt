@@ -19,7 +19,7 @@ class UniformOptimizer : Optimizer {
                 bestY = y
                 bestX = x
             }
-            LOGGER.debug { "Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, y, bestY) }
+            LOGGER.atFine().log("Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, y, bestY))
         }
         return Pair(bestX, bestY)
     }

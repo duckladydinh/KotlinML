@@ -15,9 +15,7 @@ class Booster private constructor(dataset: Dataset, params: String) : CObject(),
 
             val objective = params["objective"]
             if (objective != "binary") {
-                LOGGER.warn {
-                    "Currently, only binary classification has been tested. Be careful!"
-                }
+                LOGGER.atWarning().log("Currently, only binary classification has been tested. Be careful!")
             }
 
             val booster = Booster(dataset, getParamsString(params))

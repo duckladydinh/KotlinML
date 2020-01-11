@@ -24,8 +24,8 @@ class MathFuncTest {
                 return -((x - 1).pow(2) + (y - 2).pow(2) + (z - 3).pow(2) + (w - 4).pow(2))
             }
             val (x, y) = optimizer.argmax(func, xSpace = xSpace, maxiter = 30)
-            LOGGER.info { "At { ${(x.map { "${it.key} : ${it.value}" }.joinToString(" | "))} }" }
-            LOGGER.info { "y = $y" }
+            LOGGER.atInfo().log("At { ${(x.map { "${it.key} : ${it.value}" }.joinToString(" | "))} }")
+            LOGGER.atInfo().log("y = $y")
         }
     }
 

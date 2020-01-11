@@ -15,15 +15,16 @@ import thuan.handsome.utils.getTestXSpace
 class OptimizerTest {
     private companion object {
         fun testOptimizer(optimizer: Optimizer, metric: (DoubleArray, DoubleArray) -> Double): Pair<Double, Double> {
-            // val dataPrefix = "imblearn_abalone" // good
-            // val dataPrefix = "imblearn_pen_digits"
-            // val dataPrefix = "imblearn_car_eval_34"
-            val dataPrefix = "imblearn_yeast_me2" // not bad, 0.4
-            // val dataPrefix = "imblearn_mammography" // good
-            // val dataPrefix = "imblearn_wine_quality" // not bad
-            // val dataPrefix = "gecco2018_water"
-            // val dataPrefix = "letter_img"
-            // val dataPrefix = "imblearn_abalone_19"
+            // val dataPrefix = "data/imblearn_abalone" // good
+            // val dataPrefix = "data/imblearn_yeast_me2" // not bad, 0.4
+            // val dataPrefix = "data/imblearn_mammography" // good
+            // val dataPrefix = "data/imblearn_wine_quality" // not bad
+            val dataPrefix = "data/imblearn_letter_img"
+
+            // val dataPrefix = "data/imblearn_abalone_19"
+            // val dataPrefix = "data/imblearn_pen_digits"
+            // val dataPrefix = "data/imblearn_car_eval_34" // not following rule
+            // val dataPrefix = "data/gecco2018_water"
 
             val (trainData, trainLabel) = getTestData(
                 dataPrefix,
@@ -51,9 +52,7 @@ class OptimizerTest {
             val testPreds = booster.predict(testData)
             val testScore = metric.invoke(testPreds, testLabel)
 
-            LOGGER.info {
-                "Train F1 = $trainScore | Test F1 = $testScore"
-            }
+            LOGGER.atInfo().log("Train F1 = $trainScore | Test F1 = $testScore")
 
             booster.close()
 
@@ -73,7 +72,7 @@ class OptimizerTest {
                 totTest += test
             }
 
-            LOGGER.info { "Mean Train: ${totTrain / n} | Mean Test: ${totTest / n} | Duration: ${System.currentTimeMillis() - startTime}" }
+            LOGGER.atInfo().log("Mean Train: ${totTrain / n} | Mean Test: ${totTest / n} | Duration: ${System.currentTimeMillis() - startTime}")
         }
     }
 

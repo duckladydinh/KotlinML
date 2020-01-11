@@ -25,7 +25,7 @@ class GPRegressorTest {
         val gp = GPRegressor.fit(data, y, maxiter = 3)
 
         val res = gp.logLikelihood(gp.bestTheta, computeGradient = true)
-        LOGGER.info { res }
+        LOGGER.atInfo().log(res.toString())
 
         val (likelihood, _) = res
         assertTrue(likelihood >= -40)
@@ -45,7 +45,7 @@ class GPRegressorTest {
         val y = mat[ 0.65188470066519, 0.94640122511485, 0.9578313253012, 0.94060995184591, 0.61241970021413 ].T
         val gp = GPRegressor.fit(data, y, 50)
         val res = gp.logLikelihood(gp.bestTheta, computeGradient = true)
-        LOGGER.info { res }
+        LOGGER.atInfo().log(res.toString())
     }
 
     // mean to be disabled
@@ -63,9 +63,9 @@ class GPRegressorTest {
         val y = mat[0.6321138211382115, 0.8245125348189416, 0.6103092783505155, 0.9486823855755894, 0.9370629370629371, 0.8968363136176066, 0.9532163742690059].T
         val gp = GPRegressor.fit(data, y, 1)
         gp.bestTheta = theta
-        LOGGER.info { gp.logLikelihood(gp.bestTheta, true) }
+        LOGGER.atInfo().log(gp.logLikelihood(gp.bestTheta, true).toString())
 
         val res = gp.predict(x)
-        LOGGER.info { res }
+        LOGGER.atInfo().log(res.toString())
     }
 }

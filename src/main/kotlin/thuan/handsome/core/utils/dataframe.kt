@@ -9,7 +9,7 @@ import org.apache.commons.csv.CSVFormat
 
 fun getXY(csvMatrixPath: String, labelColumnIndex: Int): Pair<Matrix<Double>, DoubleArray> {
     val df = DataFrame.readCSV(
-        if (csvMatrixPath.startsWith("/")) getExternalResourcePath(csvMatrixPath) else csvMatrixPath,
+        csvMatrixPath,
         format = CSVFormat.DEFAULT.withNullString("")
     )
 
@@ -22,10 +22,6 @@ fun sliceByRows(data: Matrix<Double>, rowIndexes: Collection<Int>): Matrix<Doubl
         mat.setRow(row, data.getRow(dataRow))
     }
     return mat
-}
-
-private fun getExternalResourcePath(resourcePath: String): String {
-    return ::getExternalResourcePath::class.java.getResource(resourcePath).path
 }
 
 private fun getXY(df: DataFrame, labelIndex: Int): Pair<Matrix<Double>, DoubleArray> {
