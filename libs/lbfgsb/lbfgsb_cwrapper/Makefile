@@ -2,12 +2,8 @@ CC = gcc
 FC = gfortran
 LIB_DEPENDENCIES = -lgfortran
 
-CFLAGS_DEBUG = -fPIC -Wall -g
-CFLAGS_RELEASE = -fPIC -Wall -O3
-CFLAGS = $(CFLAGS_RELEASE)
-FFLAGS_DEBUG = -fPIC -Wall -fexceptions -g
-FFLAGS_RELEASE = -fPIC -Wall -fexceptions -O3
-FFLAGS = $(FFLAGS_RELEASE)
+CFLAGS = -fPIC -Wall -Ofast
+FFLAGS = -fPIC -Wall -fexceptions -Ofast
 
 ifeq ($(OS),Windows_NT)
   WINDOWS = 1
@@ -55,7 +51,7 @@ dist/thuan: build/lbfgsb_wrapper.o build/solver.o build/blas.o build/linpack.o b
 	rm -rf tmp thuan
 
 build/lbfgsb_wrapper.o: lbfgsb_wrapper.c lbfgsb_wrapper.h
-	$(CC) -O3 $(CFLAGS) -c lbfgsb_wrapper.c -o build/lbfgsb_wrapper.o
+	$(CC) $(CFLAGS) -c lbfgsb_wrapper.c -o build/lbfgsb_wrapper.o
 
 build/solver.o: fortran_src/solver.f90
 	$(FC) $(FFLAGS) -c fortran_src/solver.f90 -o build/solver.o
