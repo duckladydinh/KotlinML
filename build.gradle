@@ -62,7 +62,6 @@ jar {
 }
 
 project.configurations.api.canBeResolved = true
-
 shadowJar {
     archiveClassifier.set(null)
     configurations = [project.configurations.api]
