@@ -32,8 +32,8 @@ dependencies {
     api "com.kyonifer:koma-core-ejml:0.12"
     api "de.mpicbg.scicomp:krangl:0.11"
 
-    api 'com.google.flogger:flogger:0.4'
     api 'com.google.flogger:flogger-system-backend:0.4'
+    api 'com.google.flogger:flogger:0.4'
 
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
     testImplementation "org.junit.jupiter:junit-jupiter:5.5.2"
@@ -44,15 +44,6 @@ version = '0.1'
 
 test {
     useJUnitPlatform()
-}
-
-//noinspection GrUnresolvedAccess
-[clean, cleanTest].each {
-    //noinspection GrUnresolvedAccess
-    it.doFirst {
-        println "Cleaning previous logs!"
-        delete "logs"
-    }
 }
 
 compileKotlin {
