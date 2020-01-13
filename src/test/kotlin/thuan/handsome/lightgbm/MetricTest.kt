@@ -2,14 +2,14 @@ package thuan.handsome.lightgbm
 
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import thuan.handsome.TestSettings.Companion.getTestDataPrefix
+import thuan.handsome.TestSettings.Companion.getTestMetric
+import thuan.handsome.TestSettings.Companion.getTestXSpace
 import thuan.handsome.core.metrics.Metric
 import thuan.handsome.core.utils.correlationOf
 import thuan.handsome.core.utils.getTestData
 import thuan.handsome.core.utils.mean
 import thuan.handsome.core.utils.std
-import thuan.handsome.utils.getTestDataPrefix
-import thuan.handsome.utils.getTestMetric
-import thuan.handsome.utils.getTestXSpace
 
 class MetricTest {
     companion object {

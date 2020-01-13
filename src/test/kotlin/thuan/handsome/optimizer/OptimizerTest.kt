@@ -1,6 +1,9 @@
 package thuan.handsome.optimizer
 
 import org.junit.jupiter.api.Test
+import thuan.handsome.TestSettings.Companion.getTestDataPrefix
+import thuan.handsome.TestSettings.Companion.getTestMetric
+import thuan.handsome.TestSettings.Companion.getTestXSpace
 import thuan.handsome.core.metrics.F1Score
 import thuan.handsome.core.metrics.Metric
 import thuan.handsome.core.optimizer.BayesianOptimizer
@@ -9,9 +12,6 @@ import thuan.handsome.core.optimizer.RandomOptimizer
 import thuan.handsome.core.utils.getTestData
 import thuan.handsome.core.utils.mean
 import thuan.handsome.lightgbm.Booster
-import thuan.handsome.utils.getTestDataPrefix
-import thuan.handsome.utils.getTestMetric
-import thuan.handsome.utils.getTestXSpace
 
 /**
  * This test has no validation since I only want to see how it runs,
@@ -33,7 +33,7 @@ class OptimizerTest {
                     return scores.mean()
                 },
                 xSpace,
-                16
+                32
             )
 
             val booster = Booster.fit(params, trainData, trainLabel, 30)

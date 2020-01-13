@@ -2,9 +2,9 @@ package thuan.handsome.lightgbm
 
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import thuan.handsome.TestSettings.Companion.getTestMetric
 import thuan.handsome.core.metrics.Metric
 import thuan.handsome.core.utils.getTestData
-import thuan.handsome.utils.getTestMetric
 
 class ClassifierTest {
     companion object {
@@ -56,6 +56,6 @@ class ClassifierTest {
             bTot += b
         }
         println("(Mean Train, Mean Test),")
-        println("(${aTot / 10}, ${bTot / 10}),")
+        println("(${aTot / 5}, ${bTot / 5}),")
     }
 }
