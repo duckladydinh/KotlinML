@@ -2539,7 +2539,7 @@ subroutine lnsrlb(n, l, u, nbd, x, f, fold, gd, gdold, g, d, r, t, &
         if (gd >= zero) then
             !                               the directional derivative >=0.
             !                               Line search is impossible.
-            write(6, *)' ascent direction in projection gd = ', gd
+            !write(6, *)' ascent direction in projection gd = ', gd
             info = -4
             return
         endif

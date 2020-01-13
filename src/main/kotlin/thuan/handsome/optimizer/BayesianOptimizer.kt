@@ -13,7 +13,7 @@ import thuan.handsome.optimizer.numeric.XYPoint
 
 class BayesianOptimizer(val kernel: Kernel = Matern()) : Optimizer {
     private companion object {
-        fun suggest(xSpace: XSpace, func: (DoubleArray) -> Double, maxiter: Int = 1000): DoubleArray {
+        fun suggest(xSpace: XSpace, func: (DoubleArray) -> Double, maxiter: Int = 100): DoubleArray {
             var bestX = xSpace.sample()
             var bestValue = func.invoke(bestX)
             val diffFunc = DifferentialFunction.from { func.invoke(it) }

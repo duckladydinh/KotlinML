@@ -4,7 +4,6 @@ import kotlin.math.pow
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
-import thuan.handsome.core.utils.LOGGER
 import thuan.handsome.core.xspace.UniformXSpace
 import thuan.handsome.gp.kernel.*
 
@@ -24,8 +23,8 @@ class MathFuncTest {
                 return -((x - 1).pow(2) + (y - 2).pow(2) + (z - 3).pow(2) + (w - 4).pow(2))
             }
             val (x, y) = optimizer.argmax(func, xSpace = xSpace, maxiter = 30)
-            LOGGER.atInfo().log("At { ${(x.map { "${it.key} : ${it.value}" }.joinToString(" | "))} }")
-            LOGGER.atInfo().log("y = $y")
+            println("At { ${(x.map { "${it.key} : ${it.value}" }.joinToString(" | "))} }")
+            println("y = $y")
         }
     }
 

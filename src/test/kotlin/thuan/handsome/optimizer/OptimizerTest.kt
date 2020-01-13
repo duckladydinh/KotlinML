@@ -2,7 +2,6 @@ package thuan.handsome.optimizer
 
 import org.junit.jupiter.api.Test
 import thuan.handsome.core.metrics.f1score
-import thuan.handsome.core.utils.LOGGER
 import thuan.handsome.core.utils.getTestData
 import thuan.handsome.core.utils.mean
 import thuan.handsome.lightgbm.Booster
@@ -16,15 +15,10 @@ class OptimizerTest {
     private companion object {
         fun testOptimizer(optimizer: Optimizer, metric: (DoubleArray, DoubleArray) -> Double): Pair<Double, Double> {
             // val dataPrefix = "data/imblearn_abalone" // good
-            // val dataPrefix = "data/imblearn_yeast_me2" // not bad, 0.4
-            // val dataPrefix = "data/imblearn_mammography" // good
             // val dataPrefix = "data/imblearn_wine_quality" // not bad
-            val dataPrefix = "data/imblearn_letter_img"
-
-            // val dataPrefix = "data/imblearn_abalone_19"
-            // val dataPrefix = "data/imblearn_pen_digits"
-            // val dataPrefix = "data/imblearn_car_eval_34" // not following rule
-            // val dataPrefix = "data/gecco2018_water"
+            // val dataPrefix = "data/imblearn_yeast_me2" // not bad, 0.4
+            // val dataPrefix = "data/pima_indians_diabetes" // good
+            val dataPrefix = "data/nba_logreg" // best
 
             val (trainData, trainLabel) = getTestData(
                 dataPrefix,
@@ -52,7 +46,7 @@ class OptimizerTest {
             val testPreds = booster.predict(testData)
             val testScore = metric.invoke(testPreds, testLabel)
 
-            LOGGER.atInfo().log("Train F1 = $trainScore | Test F1 = $testScore")
+            println("Train F1 = $trainScore | Test F1 = $testScore")
 
             booster.close()
 
@@ -72,7 +66,7 @@ class OptimizerTest {
                 totTest += test
             }
 
-            LOGGER.atInfo().log("Mean Train: ${totTrain / n} | Mean Test: ${totTest / n} | Duration: ${System.currentTimeMillis() - startTime}")
+            println("Mean Train: ${totTrain / n} | Mean Test: ${totTest / n} | Duration: ${System.currentTimeMillis() - startTime}")
         }
     }
 

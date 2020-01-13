@@ -1,6 +1,13 @@
+@file:Suppress("unused")
+
 package thuan.handsome.core.metrics
 
+import kotlin.math.ln
 import kotlin.math.roundToInt
+
+fun logF1Score(predicted: DoubleArray, target: DoubleArray, eps: Double = 1e-9): Double {
+    return ln(f1score(predicted, target) + eps)
+}
 
 fun f1score(predicted: DoubleArray, target: DoubleArray): Double {
     require(predicted.size == target.size)
