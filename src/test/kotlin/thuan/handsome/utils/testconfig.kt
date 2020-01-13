@@ -37,9 +37,9 @@ fun getTestMetric(): Metric {
 }
 
 fun getTestDataPrefix(): String {
-    // return "data/imblearn_abalone" // good
+    return "data/imblearn_abalone" // good
     // return "data/imblearn_wine_quality" // not bad
     // return "data/imblearn_yeast_me2" // not bad, 0.4
     // return "data/pima_indians_diabetes" // good
-    return "data/nba_logreg" // good
+    // return "data/nba_logreg" // good
 }

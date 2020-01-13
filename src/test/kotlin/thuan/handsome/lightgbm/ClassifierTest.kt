@@ -46,7 +46,8 @@ class ClassifierTest {
             "data/nba_logreg"
         ]
     )
-    fun testDefaultPerformance(dataPrefix: String, metric: Metric = getTestMetric()) {
+    fun testDefaultPerformance(dataPrefix: String) {
+        val metric = getTestMetric()
         var aTot = 0.0
         var bTot = 0.0
         for (i in 1..10) {
