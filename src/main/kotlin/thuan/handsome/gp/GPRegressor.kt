@@ -7,9 +7,9 @@ import kotlin.math.PI
 import kotlin.math.ln
 import thuan.handsome.core.function.DifferentialEvaluation
 import thuan.handsome.core.function.DifferentialFunction
+import thuan.handsome.core.optimizer.numeric.NumericOptimizer
 import thuan.handsome.gp.kernel.Kernel
 import thuan.handsome.gp.kernel.RBF
-import thuan.handsome.optimizer.numeric.NumericOptimizer
 
 class GPRegressor internal constructor(
     private val data: Matrix<Double>, // list of horizontal vectors

@@ -4,6 +4,9 @@ import kotlin.math.pow
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import thuan.handsome.core.optimizer.BayesianOptimizer
+import thuan.handsome.core.optimizer.Optimizer
+import thuan.handsome.core.optimizer.UniformOptimizer
 import thuan.handsome.core.xspace.UniformXSpace
 import thuan.handsome.gp.kernel.*
 

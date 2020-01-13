@@ -1,4 +1,4 @@
-package thuan.handsome.optimizer
+package thuan.handsome.core.optimizer
 
 import thuan.handsome.core.xspace.XSpace
 

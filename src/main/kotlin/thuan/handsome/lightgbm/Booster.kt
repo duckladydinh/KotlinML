@@ -2,6 +2,7 @@ package thuan.handsome.lightgbm
 
 import koma.matrix.Matrix
 import thuan.handsome.core.cv.crossValidate
+import thuan.handsome.core.metrics.Metric
 import thuan.handsome.core.predictor.Predictor
 import thuan.handsome.core.utils.LOGGER
 
@@ -33,7 +34,7 @@ class Booster private constructor(dataset: Dataset, params: String) : CObject(),
         }
 
         fun cv(
-            metric: (DoubleArray, DoubleArray) -> Double,
+            metric: Metric,
             params: Map<String, Any>,
             data: Matrix<Double>,
             label: DoubleArray,

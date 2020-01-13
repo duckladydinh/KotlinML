@@ -1,12 +1,13 @@
 package thuan.handsome.core.cv
 
 import koma.matrix.Matrix
+import thuan.handsome.core.metrics.Metric
 import thuan.handsome.core.predictor.Predictor
 import thuan.handsome.core.utils.sliceByRows
 
 fun crossValidate(
     learner: (Matrix<Double>, DoubleArray) -> Predictor,
-    metric: (DoubleArray, DoubleArray) -> Double,
+    metric: Metric,
     data: Matrix<Double>,
     label: DoubleArray,
     nFolds: Int
@@ -24,7 +25,7 @@ fun crossValidate(
         if (predictor is AutoCloseable) {
             predictor.close()
         }
-        metric.invoke(preds, validLabel)
+        metric.evaluate(preds, validLabel)
     }
 }
 

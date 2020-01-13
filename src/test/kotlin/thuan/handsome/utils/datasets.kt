@@ -4,15 +4,11 @@ import koma.matrix.Matrix
 import thuan.handsome.core.utils.getXY
 
 val names = arrayOf(
-    "data/gecco2018_water",
     "data/imblearn_abalone",
-    "data/imblearn_abalone_19",
-    "data/imblearn_car_eval_34",
-    "data/imblearn_letter_img",
-    "data/imblearn_mammography",
-    "data/imblearn_pen_digits",
     "data/imblearn_wine_quality",
-    "data/imblearn_yeast_me2"
+    "data/imblearn_yeast_me2",
+    "data/pima_indians_diabetes",
+    "data/nba_logreg"
 )
 
 private val datasets = mutableMapOf<String, Pair<Matrix<Double>, DoubleArray>>()

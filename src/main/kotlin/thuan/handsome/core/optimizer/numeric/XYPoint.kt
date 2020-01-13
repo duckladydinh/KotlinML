@@ -1,4 +1,4 @@
-package thuan.handsome.optimizer.numeric
+package thuan.handsome.core.optimizer.numeric
 
 data class XYPoint(val x: DoubleArray, val y: Double) {
     override fun equals(other: Any?): Boolean {

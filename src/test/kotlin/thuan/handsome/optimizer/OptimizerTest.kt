@@ -1,10 +1,15 @@
 package thuan.handsome.optimizer
 
 import org.junit.jupiter.api.Test
-import thuan.handsome.core.metrics.f1score
+import thuan.handsome.core.metrics.Metric
+import thuan.handsome.core.optimizer.BayesianOptimizer
+import thuan.handsome.core.optimizer.Optimizer
+import thuan.handsome.core.optimizer.UniformOptimizer
 import thuan.handsome.core.utils.getTestData
 import thuan.handsome.core.utils.mean
 import thuan.handsome.lightgbm.Booster
+import thuan.handsome.utils.getTestDataPrefix
+import thuan.handsome.utils.getTestMetric
 import thuan.handsome.utils.getTestXSpace
 
 /**
@@ -13,22 +18,11 @@ import thuan.handsome.utils.getTestXSpace
  */
 class OptimizerTest {
     private companion object {
-        fun testOptimizer(optimizer: Optimizer, metric: (DoubleArray, DoubleArray) -> Double): Pair<Double, Double> {
-            // val dataPrefix = "data/imblearn_abalone" // good
-            // val dataPrefix = "data/imblearn_wine_quality" // not bad
-            // val dataPrefix = "data/imblearn_yeast_me2" // not bad, 0.4
-            // val dataPrefix = "data/pima_indians_diabetes" // good
-            val dataPrefix = "data/nba_logreg" // best
-
-            val (trainData, trainLabel) = getTestData(
-                dataPrefix,
-                isTest = false
-            )
-            val (testData, testLabel) = getTestData(
-                dataPrefix,
-                isTest = true
-            )
+        fun testOptimizer(optimizer: Optimizer, metric: Metric): Pair<Double, Double> {
             val xSpace = getTestXSpace()
+            val dataPrefix = getTestDataPrefix()
+            val (trainData, trainLabel) = getTestData(dataPrefix, isTest = false)
+            val (testData, testLabel) = getTestData(dataPrefix, isTest = true)
 
             val (params, _) = optimizer.argmax(
                 fun(params: Map<String, Any>): Double {
@@ -42,9 +36,9 @@ class OptimizerTest {
             val booster = Booster.fit(params, trainData, trainLabel, 30)
             val trainedPreds = booster.predict(trainData)
 
-            val trainScore = metric.invoke(trainedPreds, trainLabel)
+            val trainScore = metric.evaluate(trainedPreds, trainLabel)
             val testPreds = booster.predict(testData)
-            val testScore = metric.invoke(testPreds, testLabel)
+            val testScore = metric.evaluate(testPreds, testLabel)
 
             println("Train F1 = $trainScore | Test F1 = $testScore")
 
@@ -53,15 +47,16 @@ class OptimizerTest {
             return Pair(trainScore, testScore)
         }
 
-        fun multiTest(optimizer: Optimizer) {
+        fun multiTest(optimizer: Optimizer, n: Int = 8) {
+            val metric = getTestMetric()
+
             var totTrain = 0.0
             var totTest = 0.0
-            val n = 10
 
             val startTime = System.currentTimeMillis()
 
             for (i in 1..n) {
-                val (train, test) = testOptimizer(optimizer, ::f1score)
+                val (train, test) = testOptimizer(optimizer, metric)
                 totTrain += train
                 totTest += test
             }
@@ -71,12 +66,12 @@ class OptimizerTest {
     }
 
     @Test
-    fun randomOptimizerWithF1Score() {
+    fun randomOptimizerTest() {
         multiTest(UniformOptimizer())
     }
 
     @Test
-    fun bayesianOptimizerWithF1Score() {
+    fun bayesianOptimizerTest() {
         multiTest(BayesianOptimizer())
     }
 }

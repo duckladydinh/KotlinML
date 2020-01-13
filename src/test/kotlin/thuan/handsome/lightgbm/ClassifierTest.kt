@@ -2,12 +2,13 @@ package thuan.handsome.lightgbm
 
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import thuan.handsome.core.metrics.f1score
+import thuan.handsome.core.metrics.Metric
 import thuan.handsome.core.utils.getTestData
+import thuan.handsome.utils.getTestMetric
 
 class ClassifierTest {
     companion object {
-        private fun simpleBinaryClassifier(dataPrefix: String): Pair<Double, Double> {
+        private fun simpleBinaryClassifier(dataPrefix: String, metric: Metric): Pair<Double, Double> {
             val params = mapOf(
                 "objective" to "binary",
                 "is_unbalance" to true,
@@ -23,21 +24,12 @@ class ClassifierTest {
                 isTest = true
             )
 
-            val scores = Booster.cv(::f1score, params, trainData, trainLabel, 100, 5)
-
             val booster = Booster.fit(params, trainData, trainLabel, 100)
             val trainedPreds = booster.predict(trainData)
-
-            val trainScore = f1score(
-                trainedPreds,
-                trainLabel
-            )
+            val trainScore = metric.evaluate(trainedPreds, trainLabel)
 
             val testPreds = booster.predict(testData)
-            val testScore = f1score(
-                testPreds,
-                testLabel
-            )
+            val testScore = metric.evaluate(testPreds, testLabel)
             booster.close()
 
             return Pair(trainScore, testScore)
@@ -54,11 +46,11 @@ class ClassifierTest {
             "data/nba_logreg"
         ]
     )
-    fun testDefaultPerformance(dataPrefix: String) {
+    fun testDefaultPerformance(dataPrefix: String, metric: Metric = getTestMetric()) {
         var aTot = 0.0
         var bTot = 0.0
         for (i in 1..10) {
-            val (a, b) = simpleBinaryClassifier(dataPrefix)
+            val (a, b) = simpleBinaryClassifier(dataPrefix, metric)
             aTot += a
             bTot += b
         }

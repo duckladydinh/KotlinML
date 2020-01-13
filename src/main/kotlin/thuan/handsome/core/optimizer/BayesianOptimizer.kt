@@ -1,15 +1,15 @@
-package thuan.handsome.optimizer
+package thuan.handsome.core.optimizer
 
 import koma.create
 import kotlin.math.sqrt
 import thuan.handsome.core.function.DifferentialFunction
+import thuan.handsome.core.optimizer.numeric.NumericOptimizer
+import thuan.handsome.core.optimizer.numeric.XYPoint
 import thuan.handsome.core.utils.LOGGER
 import thuan.handsome.core.xspace.XSpace
 import thuan.handsome.gp.GPRegressor
 import thuan.handsome.gp.kernel.Kernel
 import thuan.handsome.gp.kernel.Matern
-import thuan.handsome.optimizer.numeric.NumericOptimizer
-import thuan.handsome.optimizer.numeric.XYPoint
 
 class BayesianOptimizer(val kernel: Kernel = Matern()) : Optimizer {
     private companion object {

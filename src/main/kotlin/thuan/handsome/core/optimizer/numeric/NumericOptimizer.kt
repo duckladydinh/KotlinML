@@ -1,4 +1,4 @@
-package thuan.handsome.optimizer.numeric
+package thuan.handsome.core.optimizer.numeric
 
 import thuan.handsome.core.function.DifferentialFunction
 import thuan.handsome.core.xspace.Bound
