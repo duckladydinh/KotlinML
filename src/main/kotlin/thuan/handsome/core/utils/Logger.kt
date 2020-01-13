@@ -3,7 +3,7 @@ package thuan.handsome.core.utils
 import com.google.common.flogger.FluentLogger
 import com.google.common.flogger.LoggerConfig
 import java.util.logging.ConsoleHandler
-import java.util.logging.Level.FINE as LEVEL
+import java.util.logging.Level.INFO as LEVEL
 
 class Logger {
     companion object {

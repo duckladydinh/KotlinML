@@ -50,7 +50,7 @@ class ClassifierTest {
         val metric = getTestMetric()
         var aTot = 0.0
         var bTot = 0.0
-        for (i in 1..10) {
+        for (i in 1..5) {
             val (a, b) = simpleBinaryClassifier(dataPrefix, metric)
             aTot += a
             bTot += b
