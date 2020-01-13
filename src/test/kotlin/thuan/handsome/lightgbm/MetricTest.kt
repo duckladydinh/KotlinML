@@ -23,7 +23,7 @@ class MetricTest {
             val (trainData, trainLabel) = getTestData(dataPrefix, isTest = false)
             val (testData, testLabel) = getTestData(dataPrefix, isTest = true)
 
-            val n = 50
+            val n = 100
             val xs = DoubleArray(n)
             val ys = DoubleArray(n)
 
@@ -58,7 +58,7 @@ class MetricTest {
     @Test
     @Disabled
     fun testSingleMetricScoreCorrelation() {
-        val corr = testMetricRelevant(getTestMetric(), -0.25)
+        val corr = testMetricRelevant(getTestMetric(), 0.0)
         println(corr)
     }
 
@@ -67,8 +67,9 @@ class MetricTest {
     fun testMultiMetricScoreCorrelation() {
         val metric = getTestMetric()
         for (kappa in sequenceOf(
-            -2.5, -2.0, -1.5, -1.0, -0.75, -0.5, -0.25,
-            0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5
+            // -2.5, -2.0, -1.5, -1.0, -0.75, -0.5, -0.25,
+            0.0
+            // , 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5
         )) {
             var tot = 0.0
             for (i in 1..5) {

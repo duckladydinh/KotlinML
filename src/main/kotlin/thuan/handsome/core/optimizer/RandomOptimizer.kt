@@ -3,7 +3,7 @@ package thuan.handsome.core.optimizer
 import thuan.handsome.core.utils.Logger
 import thuan.handsome.core.xspace.XSpace
 
-class UniformOptimizer : Optimizer {
+class RandomOptimizer : Optimizer {
     override fun argmax(
         func: (Map<String, Any>) -> Double,
         xSpace: XSpace,

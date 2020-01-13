@@ -1,10 +1,11 @@
 package thuan.handsome.optimizer
 
 import org.junit.jupiter.api.Test
+import thuan.handsome.core.metrics.F1Score
 import thuan.handsome.core.metrics.Metric
 import thuan.handsome.core.optimizer.BayesianOptimizer
 import thuan.handsome.core.optimizer.Optimizer
-import thuan.handsome.core.optimizer.UniformOptimizer
+import thuan.handsome.core.optimizer.RandomOptimizer
 import thuan.handsome.core.utils.getTestData
 import thuan.handsome.core.utils.mean
 import thuan.handsome.lightgbm.Booster
@@ -18,6 +19,8 @@ import thuan.handsome.utils.getTestXSpace
  */
 class OptimizerTest {
     private companion object {
+        val f1Score = F1Score()
+
         fun testOptimizer(optimizer: Optimizer, metric: Metric): Pair<Double, Double> {
             val xSpace = getTestXSpace()
             val dataPrefix = getTestDataPrefix()
@@ -36,9 +39,9 @@ class OptimizerTest {
             val booster = Booster.fit(params, trainData, trainLabel, 30)
             val trainedPreds = booster.predict(trainData)
 
-            val trainScore = metric.evaluate(trainedPreds, trainLabel)
+            val trainScore = f1Score.evaluate(trainedPreds, trainLabel)
             val testPreds = booster.predict(testData)
-            val testScore = metric.evaluate(testPreds, testLabel)
+            val testScore = f1Score.evaluate(testPreds, testLabel)
 
             println("Train F1 = $trainScore | Test F1 = $testScore")
 
@@ -67,7 +70,7 @@ class OptimizerTest {
 
     @Test
     fun randomOptimizerTest() {
-        multiTest(UniformOptimizer())
+        multiTest(RandomOptimizer())
     }
 
     @Test
