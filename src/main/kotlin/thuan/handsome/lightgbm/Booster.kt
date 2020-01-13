@@ -4,7 +4,7 @@ import koma.matrix.Matrix
 import thuan.handsome.core.cv.crossValidate
 import thuan.handsome.core.metrics.Metric
 import thuan.handsome.core.predictor.Predictor
-import thuan.handsome.core.utils.LOGGER
+import thuan.handsome.core.utils.Logger
 
 class Booster private constructor(dataset: Dataset, params: String) : CObject(), Predictor {
     companion object {
@@ -16,7 +16,7 @@ class Booster private constructor(dataset: Dataset, params: String) : CObject(),
 
             val objective = params["objective"]
             if (objective != "binary") {
-                LOGGER.atWarning().log("Currently, only binary classification has been tested. Be careful!")
+                Logger.warning().log("Currently, only binary classification has been tested. Be careful!")
             }
 
             val booster = Booster(dataset, getParamsString(params))

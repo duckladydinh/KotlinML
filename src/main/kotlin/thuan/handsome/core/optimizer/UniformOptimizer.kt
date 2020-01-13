@@ -1,6 +1,6 @@
 package thuan.handsome.core.optimizer
 
-import thuan.handsome.core.utils.LOGGER
+import thuan.handsome.core.utils.Logger
 import thuan.handsome.core.xspace.XSpace
 
 class UniformOptimizer : Optimizer {
@@ -19,7 +19,7 @@ class UniformOptimizer : Optimizer {
                 bestY = y
                 bestX = x
             }
-            LOGGER.atFine().log("Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, y, bestY))
+            Logger.fine().log("Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, y, bestY))
         }
         return Pair(bestX, bestY)
     }

@@ -5,7 +5,7 @@ import kotlin.math.sqrt
 import thuan.handsome.core.function.DifferentialFunction
 import thuan.handsome.core.optimizer.numeric.NumericOptimizer
 import thuan.handsome.core.optimizer.numeric.XYPoint
-import thuan.handsome.core.utils.LOGGER
+import thuan.handsome.core.utils.Logger
 import thuan.handsome.core.xspace.XSpace
 import thuan.handsome.gp.GPRegressor
 import thuan.handsome.gp.kernel.Kernel
@@ -31,7 +31,7 @@ class BayesianOptimizer(val kernel: Kernel = Matern()) : Optimizer {
                 }
             }
 
-            LOGGER.atFine().log("Next x's UCP Score = $bestValue")
+            Logger.fine().log("Next x's UCP Score = $bestValue")
             return bestX
         }
 
@@ -64,8 +64,8 @@ class BayesianOptimizer(val kernel: Kernel = Matern()) : Optimizer {
         val data = mutableListOf(bestX)
         val y = mutableListOf(bestY)
 
-        LOGGER.atFine().log("WARMING UP")
-        LOGGER.atFine().log("Iteration %3d | y = %.6f | bestY = %.6f.".format(1, bestY, bestY))
+        Logger.fine().log("WARMING UP")
+        Logger.fine().log("Iteration %3d | y = %.6f | bestY = %.6f.".format(1, bestY, bestY))
 
         // warm-up
         for (iter in 2..5) {
@@ -78,10 +78,10 @@ class BayesianOptimizer(val kernel: Kernel = Matern()) : Optimizer {
                 bestY = res
                 bestX = x
             }
-            LOGGER.atFine().log("Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, res, bestY))
+            Logger.fine().log("Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, res, bestY))
         }
 
-        LOGGER.atFine().log("START TRAINING")
+        Logger.fine().log("START TRAINING")
         for (iter in 6..maxiter) {
             val dataMat = create(data.toTypedArray())
             val yMat = create(y.toDoubleArray()).T
@@ -101,7 +101,7 @@ class BayesianOptimizer(val kernel: Kernel = Matern()) : Optimizer {
 
             data.add(x)
             y.add(res)
-            LOGGER.atFine().log("Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, res, bestY))
+            Logger.fine().log("Iteration %3d | y = %.6f | bestY = %.6f.".format(iter, res, bestY))
         }
 
         return XYPoint(bestX, bestY)
