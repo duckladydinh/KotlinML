@@ -18,12 +18,16 @@ class MathFuncTest {
             xSpace.addParam("y", -100.0, 100.0)
             xSpace.addParam("z", -100.0, 100.0)
             xSpace.addParam("w", -100.0, 100.0)
+
             val func = fun(params: Map<String, Any>): Double {
                 val x = params["x"] as Double
                 val y = params["y"] as Double
                 val z = params["z"] as Double
                 val w = params["w"] as Double
-                return -((x - 1).pow(2) + (y - 2).pow(2) + (z - 3).pow(2) + (w - 4).pow(2))
+                return -((x - 1).pow(2) +
+                    (y - 2).pow(2) +
+                    (z - 3).pow(2) +
+                    (w - 4).pow(2))
             }
             val (x, y) = optimizer.argmax(func, xSpace = xSpace, maxiter = 30)
             println("At { ${(x.map { "${it.key} : ${it.value}" }.joinToString(" | "))} }")
