@@ -1,6 +1,7 @@
 package thuan.handsome.optimizer
 
 import org.junit.jupiter.api.Test
+import thuan.handsome.TestSettings.Companion.getTestData
 import thuan.handsome.TestSettings.Companion.getTestDataPrefix
 import thuan.handsome.TestSettings.Companion.getTestMetric
 import thuan.handsome.TestSettings.Companion.getTestXSpace
@@ -9,7 +10,6 @@ import thuan.handsome.core.metrics.Metric
 import thuan.handsome.core.optimizer.BayesianOptimizer
 import thuan.handsome.core.optimizer.Optimizer
 import thuan.handsome.core.optimizer.RandomOptimizer
-import thuan.handsome.core.utils.getTestData
 import thuan.handsome.core.utils.mean
 import thuan.handsome.lightgbm.Booster
 
@@ -27,13 +27,18 @@ class OptimizerTest {
             val (trainData, trainLabel) = getTestData(dataPrefix, isTest = false)
             val (testData, testLabel) = getTestData(dataPrefix, isTest = true)
 
+            val func = fun(params: Map<String, Any>): Double {
+                val scores = Booster.cv(metric, params,
+                    data = trainData,
+                    label = trainLabel,
+                    maxiter = 30,
+                    nFolds = 5
+                )
+                return scores.mean()
+            }
             val (params, _) = optimizer.argmax(
-                fun(params: Map<String, Any>): Double {
-                    val scores = Booster.cv(metric, params, trainData, trainLabel, 30, 5)
-                    return scores.mean()
-                },
-                xSpace,
-                32
+                func, xSpace,
+                maxiter = 32
             )
 
             val booster = Booster.fit(params, trainData, trainLabel, 30)

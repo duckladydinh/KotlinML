@@ -2,9 +2,9 @@ package thuan.handsome.lightgbm
 
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import thuan.handsome.TestSettings.Companion.getTestData
 import thuan.handsome.TestSettings.Companion.getTestMetric
 import thuan.handsome.core.metrics.Metric
-import thuan.handsome.core.utils.getTestData
 
 class ClassifierTest {
     companion object {
@@ -12,6 +12,15 @@ class ClassifierTest {
             val params = mapOf(
                 "objective" to "binary",
                 "is_unbalance" to true,
+
+                // "min_child_weight" to 16,
+                // "num_leaves" to 96,
+                // "max_depth" to 10,
+                // "min_split_gain" to 0.01,
+                // "subsample" to 0.8,
+                // "lambda_l1" to 0.9,
+                // "lambda_l2" to 0.9,
+
                 "verbose" to -1
             )
 

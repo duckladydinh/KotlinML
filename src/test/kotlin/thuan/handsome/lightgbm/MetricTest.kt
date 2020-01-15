@@ -2,12 +2,12 @@ package thuan.handsome.lightgbm
 
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import thuan.handsome.TestSettings.Companion.getTestData
 import thuan.handsome.TestSettings.Companion.getTestDataPrefix
 import thuan.handsome.TestSettings.Companion.getTestMetric
 import thuan.handsome.TestSettings.Companion.getTestXSpace
 import thuan.handsome.core.metrics.Metric
 import thuan.handsome.core.utils.correlationOf
-import thuan.handsome.core.utils.getTestData
 import thuan.handsome.core.utils.mean
 import thuan.handsome.core.utils.std
 
@@ -24,8 +24,8 @@ class MetricTest {
             val (testData, testLabel) = getTestData(dataPrefix, isTest = true)
 
             val n = 100
-            val xs = DoubleArray(n)
-            val ys = DoubleArray(n)
+            val xs = mutableListOf<Double>()
+            val ys = mutableListOf<Double>()
 
             for (i in 0 until n) {
                 val params = xSpace.decorate(xSpace.sample())
@@ -42,8 +42,10 @@ class MetricTest {
                 val trainScore = metric.evaluate(trainedPreds, trainLabel)
                 val testScore = metric.evaluate(testPreds, testLabel)
 
-                xs[i] = objScore
-                ys[i] = testScore
+                if (objScore + testScore > 1e-6) {
+                    xs.add(objScore)
+                    ys.add(testScore)
+                }
 
                 if (enableLog) {
                     println("($objScore, $trainScore, $testScore),")
@@ -51,7 +53,7 @@ class MetricTest {
 
                 booster.close()
             }
-            return correlationOf(xs, ys)
+            return correlationOf(xs.toDoubleArray(), ys.toDoubleArray())
         }
     }
 
@@ -67,9 +69,8 @@ class MetricTest {
     fun testMultiMetricScoreCorrelation() {
         val metric = getTestMetric()
         for (kappa in sequenceOf(
-            // -2.5, -2.0, -1.5, -1.0, -0.75, -0.5, -0.25,
-            0.0
-            // , 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5
+            -2.5, -2.0, -1.5, -1.0, -0.75, -0.5, -0.25,
+            0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5
         )) {
             var tot = 0.0
             for (i in 1..5) {
