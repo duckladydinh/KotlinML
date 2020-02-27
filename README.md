@@ -16,6 +16,47 @@ Waiting. I am waiting for the release of Kotlin 1.4 and most importantly, Kotlin
 ## Contribution
 This project welcomes and needs your support to survive! Please help me make Kotlin for Data Science great again!
 
+## Installation
+This  project  will  soon be  publicly  available  via  popular  repositories such as JCenter or Maven Central and then this step can be conveniently skipped.  However, until the general availability, it is necessary to build and deploy the software for local use. Please go to the project folder(kotlinml or KotlinML) and open it in your favorite terminal. Then run the following command
+
+```bash
+>>  ./gradlew clean build -x test
+>>  ./gradlew publishToMavenLocal
+```
+
+After that, the framework should be accessible to every local projects after declaring the dependency correctly. An example for declaring dependency on this framework with Maven is given below
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>thuan.handsome</groupId>
+            <artifactId>kotlinml</artifactId>
+            <version>0.1</version>
+        </dependency>
+    </dependencies>
+```
+
+## Features
+The following features are currently available. To use them, please check the source code and provided tests or wait until the documentation is improved.
+
+* Provides a Kotlin API for basic classification and regression with LightGBM.
+    
+* Provides a Kotlin API for local optimization with the gradient-based L-BGFS-B algorithm.
+    
+* Provides a uniform Random Optimizer in Kotlin for optimizing any black-box function.
+    
+* Provides a Bayesian Optimizer in Kotlin for optimizing any black-box function.
+    
+* Provides a basic implementation of Gaussian Process Regression with 2 popular kernels - Matern and RBF - for supporting Bayesian Implementation.
+
+* Provides basic metrics such as F1 Score and Accuracy for verifying model performance.
+    
+* Provides a cross-validation method for general use.
+    
+* Provides various tests and examples for ensuring quality and assisting users to get familiar.
+
+* Provides datasets of small and medium sizes for testing and experimenting.
+
 ## Basic APIs
 For LightGBM, there are a few important methods that you need to know before using. They are presented as follows
 
